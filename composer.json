@@ -31,7 +31,7 @@
                 "Kodilab\\LaravelBatuta\\LaravelBatutaProvider"
             ],
             "aliases": {
-                "Batuta": "Kodilab\\LaravelBatuta\\Batuta"
+                "Batuta": "Kodilab\\LaravelBatuta\\Facades\\Batuta"
             }
         }
     }

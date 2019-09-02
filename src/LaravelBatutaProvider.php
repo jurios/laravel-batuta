@@ -48,6 +48,8 @@ class LaravelBatutaProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton('batuta', function ($app) {
+            return new Batuta();
+        });
     }
 }
