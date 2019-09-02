@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Kodilab\LaravelBatuta;
+namespace Kodilab\LaravelBatuta\Batuta;
 
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;

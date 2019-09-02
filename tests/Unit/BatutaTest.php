@@ -7,11 +7,10 @@ namespace Kodilab\LaravelBatuta\Tests\Unit;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\WithFaker;
-use Kodilab\LaravelBatuta\Batuta;
+use Kodilab\LaravelBatuta\Batuta\Batuta;
 use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Models\Resource;
 use Kodilab\LaravelBatuta\Models\Role;
-use Kodilab\LaravelBatuta\Tests\fixtures\Models\User;
 use Kodilab\LaravelBatuta\Tests\TestCase;
 
 class BatutaTest extends TestCase
