@@ -1,0 +1,66 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateBatutaRolesTable extends Migration
+{
+    /** @var string */
+    protected $table;
+
+    /** @var string */
+    protected $table_role_user;
+
+    public function __construct()
+    {
+        $this->table = config('permissions.tables.roles', 'perm_roles');
+        $this->table_role_user = config('permissions.tables.role_user', 'perm_role_user');
+    }
+
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::create($this->table, function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name')->unique()->nullable(false)->default(null);
+
+            $table->boolean('god')->nullable(false)->default(false);
+            $table->boolean('default')->nullable(false)->default(false);
+
+            $table->timestamps();
+        });
+
+        Schema::create($this->table_role_user, function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->nullable(false)->default(null);
+            $table->foreign('user_id')->references('id')
+                        ->on(config('permissions.tables.users', 'users'))->onDelete('cascade');
+
+            $table->unsignedBigInteger('role_id')->nullable(false)->default(null);
+            $table->foreign('role_id')->references('id')
+                        ->on(config('permissions.tables.roles', 'perm_roles'))->onDelete('cascade');
+        });
+
+        //Creating "god" user
+        DB::table($this->table)->insert([
+            'name' => config('permissions.roles.god', 'god'),
+            'god' => true
+        ]);
+
+        //Creating "default" user
+        DB::table($this->table)->insert([
+            'name' => config('permissions.roles.default', 'user'),
+            'default' => true
+        ]);
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists($this->table);
+    }
+}
