@@ -7,7 +7,7 @@ namespace Kodilab\LaravelBatuta;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
-class Facade extends \Illuminate\Support\Facades\Facade
+class Batuta
 {
     /**
      * Create a resource
@@ -104,10 +104,5 @@ class Facade extends \Illuminate\Support\Facades\Facade
         }
 
         return $resource;
-    }
-
-    protected static function getFacadeAccessor()
-    {
-        return 'cache';
     }
 }

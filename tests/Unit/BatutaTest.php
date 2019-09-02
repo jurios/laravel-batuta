@@ -7,14 +7,14 @@ namespace Kodilab\LaravelBatuta\Tests\Unit;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\WithFaker;
-use Kodilab\LaravelBatuta\Facade;
+use Kodilab\LaravelBatuta\Batuta;
 use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Models\Resource;
 use Kodilab\LaravelBatuta\Models\Role;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\User;
 use Kodilab\LaravelBatuta\Tests\TestCase;
 
-class FacadeTest extends TestCase
+class BatutaTest extends TestCase
 {
     use WithFaker;
 
@@ -25,7 +25,7 @@ class FacadeTest extends TestCase
     {
         $this->assertTrue(Resource::all()->isEmpty());
 
-        Facade::createResource($this->faker->word);
+        Batuta::createResource($this->faker->word);
 
         $this->assertFalse(Resource::all()->isEmpty());
     }
@@ -35,14 +35,14 @@ class FacadeTest extends TestCase
         $this->expectException(QueryException::class);
         $resource = factory(Resource::class)->create();
 
-        Facade::createResource($resource->name);
+        Batuta::createResource($resource->name);
     }
 
     public function test_removeResource_should_remove_the_resource()
     {
         $resource = factory(Resource::class)->create();
 
-        Facade::removeResource($resource->name);
+        Batuta::removeResource($resource->name);
 
         $this->assertNull(Resource::find($resource->id));
     }
@@ -51,7 +51,7 @@ class FacadeTest extends TestCase
     {
         $resource = factory(Resource::class)->create();
 
-        Facade::removeResource($this->faker->unique()->name);
+        Batuta::removeResource($this->faker->unique()->name);
 
         $this->assertNotNull(Resource::find($resource->id));
     }
@@ -65,7 +65,7 @@ class FacadeTest extends TestCase
 
         $this->assertTrue($resource->actions->isEmpty());
 
-        Facade::addAction($resource->name, $this->faker->unique()->word);
+        Batuta::addAction($resource->name, $this->faker->unique()->word);
         $resource->refresh();
 
         $this->assertFalse($resource->actions->isEmpty());
@@ -74,7 +74,7 @@ class FacadeTest extends TestCase
     public function test_addActionToResource_should_throw_an_exception_if_the_resource_does_not_exists()
     {
         $this->expectException(ModelNotFoundException::class);
-        Facade::addAction($this->faker->unique()->word, $this->faker->unique()->word);
+        Batuta::addAction($this->faker->unique()->word, $this->faker->unique()->word);
     }
 
     public function test_removeAction_should_remove_an_action_to_the_resource()
@@ -86,7 +86,7 @@ class FacadeTest extends TestCase
 
         $this->assertFalse($resource->actions->isEmpty());
 
-        Facade::removeAction($resource->name, $action->name);
+        Batuta::removeAction($resource->name, $action->name);
         $resource->refresh();
 
         $this->assertTrue($resource->actions->isEmpty());
@@ -95,7 +95,7 @@ class FacadeTest extends TestCase
     public function test_removeAction_should_throw_an_exception_if_the_resource_does_not_exists()
     {
         $this->expectException(ModelNotFoundException::class);
-        Facade::addAction($this->faker->unique()->word, $this->faker->unique()->word);
+        Batuta::addAction($this->faker->unique()->word, $this->faker->unique()->word);
     }
 
     /*
@@ -107,7 +107,7 @@ class FacadeTest extends TestCase
 
         $this->assertTrue(Role::where('name', $name)->get()->isEmpty());
 
-        Facade::createRole($name);
+        Batuta::createRole($name);
 
         $this->assertFalse(Role::where('name', $name)->get()->isEmpty());
     }
@@ -117,14 +117,14 @@ class FacadeTest extends TestCase
         $this->expectException(QueryException::class);
         $role = factory(Role::class)->create();
 
-        Facade::createRole($role->name);
+        Batuta::createRole($role->name);
     }
 
     public function test_removeRole_should_remove_the_role()
     {
         $role = factory(Role::class)->create();
 
-        Facade::removeRole($role->name);
+        Batuta::removeRole($role->name);
 
         $this->assertNull(Role::find($role->id));
     }
@@ -133,7 +133,7 @@ class FacadeTest extends TestCase
     {
         $role = factory(Role::class)->create();
 
-        Facade::removeRole($this->faker->unique()->name);
+        Batuta::removeRole($this->faker->unique()->name);
 
         $this->assertNotNull(Role::find($role->id));
     }
