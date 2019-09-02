@@ -5,6 +5,7 @@ namespace Kodilab\LaravelBatuta\Traits;
 
 
 use Illuminate\Foundation\Auth\User;
+use Kodilab\LaravelBatuta\Models\Action;
 
 trait RolePermissions
 {
@@ -15,6 +16,25 @@ trait RolePermissions
         return $this->belongsToMany(
             User::class, config('batuta.tables.role_user', 'batuta_role_user')
         );
+    }
+
+    /**
+     * Returns whether the role has permission or not for the given action
+     *
+     * @param Action $action
+     * @return bool
+     */
+    public function hasPermission(Action $action)
+    {
+        if ($this->isGod()) {
+            return true;
+        }
+
+        if (!is_null($permission = $this->actions()->find($action->id))) {
+            return $permission->pivot->permission;
+        }
+
+        return false;
     }
 
     /**

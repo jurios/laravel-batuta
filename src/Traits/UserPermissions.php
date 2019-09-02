@@ -4,6 +4,7 @@
 namespace Kodilab\LaravelBatuta\Traits;
 
 
+use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Models\Role;
 
 trait UserPermissions
@@ -68,6 +69,32 @@ trait UserPermissions
     public function hasRole(Role $role)
     {
         return !is_null($this->roles()->find($role->id));
+    }
+
+    /**
+     * Returns whether the user has permission or not for the given action
+     *
+     * @param Action $action
+     * @return bool
+     */
+    public function hasPermission(Action $action)
+    {
+        if ($this->isGod()) {
+            return true;
+        }
+
+        if (!is_null($permission = $this->actions()->find($action->id))) {
+            return $permission->pivot->permission;
+        }
+
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            if ($role->hasPermission($action)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
