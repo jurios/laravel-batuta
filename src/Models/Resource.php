@@ -11,7 +11,7 @@ class Resource extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->table = config('batuta.tables.resources', 'perm_resources');
+        $this->table = config('batuta.tables.resources', 'batuta_resources');
         parent::__construct($attributes);
     }
 

@@ -14,8 +14,8 @@ class CreateBatutaPermissionsTables extends Migration
 
     public function __construct()
     {
-        $this->table_role_permissions = config('batuta.tables.role_permissions', 'perm_role_permissions');
-        $this->table_user_permissions = config('batuta.tables.role_permissions', 'perm_user_permissions');
+        $this->table_role_permissions = config('batuta.tables.role_permissions', 'batuta_role_permissions');
+        $this->table_user_permissions = config('batuta.tables.user_permissions', 'batuta_user_permissions');
     }
 
     /**
@@ -26,11 +26,11 @@ class CreateBatutaPermissionsTables extends Migration
         Schema::create($this->table_role_permissions, function (Blueprint $table) {
             $table->unsignedBigInteger('role_id')->nullable(false)->default(null);
             $table->foreign('role_id')->references('id')
-                        ->on(config('permissions.tables.roles', 'perm_roles'))->onDelete('cascade');
+                        ->on(config('batuta.tables.roles', 'batuta_roles'))->onDelete('cascade');
 
             $table->unsignedBigInteger('action_id')->nullable(false)->default(null);
             $table->foreign('action_id')->references('id')
-                        ->on(config('permissions.tables.actions', 'perm_actions'))->onDelete('cascade');
+                        ->on(config('batuta.tables.actions', 'batuta_actions'))->onDelete('cascade');
 
             $table->boolean('permission')->nullable(false)->default(false);
         });
@@ -38,11 +38,11 @@ class CreateBatutaPermissionsTables extends Migration
         Schema::create($this->table_user_permissions, function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable(false)->default(null);
             $table->foreign('user_id')->references('id')
-                        ->on(config('permissions.tables.users', 'users'))->onDelete('cascade');
+                        ->on(config('batuta.tables.users', 'users'))->onDelete('cascade');
 
             $table->unsignedBigInteger('action_id')->nullable(false)->default(null);
             $table->foreign('action_id')->references('id')
-                        ->on(config('permissions.tables.actions', 'perm_actions'))->onDelete('cascade');
+                        ->on(config('batuta.tables.actions', 'batuta_actions'))->onDelete('cascade');
 
             $table->boolean('permission')->nullable(false)->default(false);
         });

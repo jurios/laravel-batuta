@@ -11,7 +11,7 @@ class CreateBatutaActionsTable extends Migration
 
     public function __construct()
     {
-        $this->table = config('batuta.tables.actions', 'perm_actions');
+        $this->table = config('batuta.tables.actions', 'batuta_actions');
     }
 
     /**
@@ -26,7 +26,7 @@ class CreateBatutaActionsTable extends Migration
 
             $table->unsignedBigInteger('resource_id')->nullable(false)->default(null);
             $table->foreign('resource_id')->references('id')
-                ->on(config('batuta.tables.resources', 'perm_resources'))
+                ->on(config('batuta.tables.resources', 'batuta_resources'))
                 ->onDelete('cascade');
         });
     }

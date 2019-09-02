@@ -35,10 +35,6 @@ class LaravelBatutaProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('permissions.php'),
-        ], 'config');
-
         $this->commands([
             Install::class,
             Config::class

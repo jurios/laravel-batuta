@@ -11,7 +11,7 @@ class CreateBatutaResourcesTable extends Migration
 
     public function __construct()
     {
-        $this->table = config('permissions.tables.resources', 'perm_resources');
+        $this->table = config('batuta.tables.resources', 'batuta_resources');
     }
 
     /**

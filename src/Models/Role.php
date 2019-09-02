@@ -20,7 +20,7 @@ class Role extends Model implements HasPermissions
 
     public function __construct(array $attributes = [])
     {
-        $this->table = config('batuta.tables.roles', 'perm_roles');
+        $this->table = config('batuta.tables.roles', 'batuta_roles');
         parent::__construct($attributes);
     }
 

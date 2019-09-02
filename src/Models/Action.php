@@ -11,7 +11,7 @@ class Action extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->table = config('batuta.tables.actions', 'perm_actions');
+        $this->table = config('batuta.tables.actions', 'batuta_actions');
         parent::__construct($attributes);
     }
 

@@ -13,7 +13,7 @@ trait UserPermissions
     public function roles()
     {
         return $this->belongsToMany(
-            Role::class, config('batuta.tables.role_user', 'perm_role_user')
+            Role::class, config('batuta.tables.role_user', 'batuta_role_user')
         );
     }
 
@@ -87,6 +87,6 @@ trait UserPermissions
      */
     public static function getPermissionsTable()
     {
-        return config('batuta.user_permissions', 'perm_user_permissions');
+        return config('batuta.user_permissions', 'batuta_user_permissions');
     }
 }

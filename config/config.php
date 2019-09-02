@@ -18,13 +18,13 @@ return [
     |
     */
     'tables' => [
-        'resources'         => 'perm_resources',
-        'actions'           => 'perm_actions',
-        'roles'             => 'perm_roles',
+        'resources'         => 'batuta_resources',
+        'actions'           => 'batuta_actions',
+        'roles'             => 'batuta_roles',
         'users'             => 'users',
-        'role_user'         => 'perm_role_user',
-        'role_permissions'  => 'perm_role_permissions',
-        'user_permissions'  => 'perm_user_permissions'
+        'role_user'         => 'batuta_role_user',
+        'role_permissions'  => 'batuta_role_permissions',
+        'user_permissions'  => 'batuta_user_permissions'
     ],
 
     /*

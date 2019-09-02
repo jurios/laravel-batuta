@@ -16,7 +16,7 @@ class Facade extends \Illuminate\Support\Facades\Facade
      */
     public static function createResource(string $name)
     {
-        DB::table(config('permissions.tables.resources', 'perm_resources'))->insert([
+        DB::table(config('batuta.tables.resources', 'batuta_resources'))->insert([
             'name' => $name
         ]);
     }
@@ -28,7 +28,7 @@ class Facade extends \Illuminate\Support\Facades\Facade
      */
     public static function removeResource(string $name)
     {
-        DB::table(config('permissions.tables.resources', 'perm_resources'))
+        DB::table(config('batuta.tables.resources', 'batuta_resources'))
             ->where('name', $name)->delete();
     }
 
@@ -43,7 +43,7 @@ class Facade extends \Illuminate\Support\Facades\Facade
     {
         $resource = self::getResourceOrFail($resource_name);
 
-        DB::table(config('permissions.tables.actions', 'perm_actions'))->insert([
+        DB::table(config('batuta.tables.actions', 'batuta_actions'))->insert([
             'name' => $action_name,
             'description' => $action_description,
             'resource_id' => $resource->id
@@ -60,7 +60,7 @@ class Facade extends \Illuminate\Support\Facades\Facade
     {
         $resource = self::getResourceOrFail($resource_name);
 
-        DB::table(config('permissions.tables.actions', 'perm_actions'))
+        DB::table(config('batuta.tables.actions', 'batuta_actions'))
             ->where('resource_id', $resource->id)->where('name', $action_name)
             ->delete();
     }
@@ -72,7 +72,7 @@ class Facade extends \Illuminate\Support\Facades\Facade
      */
     public static function createRole(string $name)
     {
-        DB::table(config('permissions.tables.roles', 'perm_roles'))->insert([
+        DB::table(config('batuta.tables.roles', 'batuta_roles'))->insert([
             'name' => $name
         ]);
     }
@@ -84,7 +84,7 @@ class Facade extends \Illuminate\Support\Facades\Facade
      */
     public static function removeRole(string $name)
     {
-        DB::table(config('permissions.tables.roles', 'perm_roles'))
+        DB::table(config('batuta.tables.roles', 'batuta_roles'))
             ->where('name', $name)->delete();
     }
 
@@ -96,7 +96,7 @@ class Facade extends \Illuminate\Support\Facades\Facade
      */
     private static function getResourceOrFail(string $resource_name)
     {
-        $resource = DB::table(config('permissions.tables.resources', 'perm_resources'))
+        $resource = DB::table(config('batuta.tables.resources', 'batuta_resources'))
             ->where('name', $resource_name)->get()->first();
 
         if (is_null($resource)) {
