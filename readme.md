@@ -1,4 +1,5 @@
 # laravel-batuta
+[![Build Status](https://travis-ci.com/jurios/laravel-batuta.svg?branch=master)](https://travis-ci.com/jurios/laravel-batuta)
 
 `laravel-batuta` is a package for Laravel which provides a permissions solutions which is compatible
 with the `Authorization` system provided by Laravel.
