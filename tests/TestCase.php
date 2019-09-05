@@ -67,7 +67,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $migrations = $this->filesystem->files(dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'database/migrations');
 
         /** @var SplFileInfo $migration */
-        foreach ($migrations as $migration)
+        foreach ($migrations as $index => $migration)
         {
             // removes the .stub from the file
             $filename = preg_replace('/\.stub$/', '', $migration->getFilename());
@@ -75,7 +75,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
             $this->filesystem->copy(
                 $migration->getRealPath(),
-                $this->resources_path . DIRECTORY_SEPARATOR . 'database/migrations/'.date('Y_m_d_His', time()). $filename
+                $this->resources_path . DIRECTORY_SEPARATOR . 'database/migrations/'.date('Y_m_d_His', time() + $index). $filename
             );
         }
     }

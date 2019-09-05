@@ -70,7 +70,7 @@ class Install extends Command
         $progressBar->start();
 
         /** @var SplFileInfo $migration */
-        foreach ($migrations as $migration) {
+        foreach ($migrations as $index => $migration) {
             $filename = $migration->getFilename();
 
             if (preg_match('/\.php\.stub$/', $filename)) {
@@ -79,10 +79,9 @@ class Install extends Command
 
                 $progressBar->setMessage('Publishing migration: ' . $name);
 
-                $this->filesystem->copy($migration->getRealPath(), database_path('migrations/'.date('Y_m_d_His', time()). '_' . $name));
+                $this->filesystem->copy($migration->getRealPath(), database_path('migrations/'.date('Y_m_d_His', time() + $index). '_' . $name));
 
                 // Sleep must be performed in order to change the datetime in the generated migration file name
-                sleep(1);
                 $progressBar->advance();
             }
         }
