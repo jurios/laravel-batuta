@@ -12,6 +12,8 @@ class User extends Authenticatable
     use HasPermissions;
     use Notifiable;
 
+    public $grant_all = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -28,4 +30,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function grantAllPermissions()
+    {
+        return $this->grant_all;
+    }
 }

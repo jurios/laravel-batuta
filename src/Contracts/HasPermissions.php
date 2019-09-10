@@ -9,13 +9,6 @@ use Kodilab\LaravelBatuta\Models\Action;
 interface HasPermissions
 {
     /**
-     * Returns the permission table
-     *
-     * @return string
-     */
-    public static function getPermissionsTable();
-
-    /**
      * Updates a permission (or create if it does not exist). If detaching is true, then the previous permissions are
      * removed
      *

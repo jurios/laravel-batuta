@@ -32,20 +32,67 @@ trait HasPermissions
     }
 
     /**
-     * Updates a permission (or create if it does not exist). If detaching is true, then the previous permissions are
-     * removed.
+     * Update a permission over an action
+     *
+     * @param Action $action
+     * @param bool $permission
+     */
+    public function updatePermission(Action $action, bool $permission)
+    {
+        $this->actions()->sync([$action->id => ['permission' => $permission]], false);
+        $this->refresh();
+    }
+
+    /**
+     * Update multiple permissions. If detaching is true, then previous permissions are removed.
+     * The array format must be:
+     *
+     *  [
+     *      $actionId => true|false,
+     *      ...
+     *  ]
      *
      * @param array $permissions
      * @param bool $detaching
      */
-    public function updatePermissions(array $permissions, bool $detaching = false)
+    public function bulkPermissions(array $permissions, bool $detaching = false)
     {
         $permissions = array_map(function ($item) {
             return ['permission' => $item];
         }, $permissions);
 
         $this->actions()->sync($permissions, $detaching);
+    }
 
-        $this->refresh();
+    /**
+     * Returns whether a permission is granted.
+     *
+     * @param Action $action
+     * @return bool
+     */
+    public function hasPermission(Action $action)
+    {
+        if ($this->shouldGrantAllPermissions()) {
+            return true;
+        }
+
+        if (!is_null($permission = $this->actions()->find($action->id))) {
+            return $permission->pivot->permission;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return whether should grant all permissions
+     *
+     * @return bool
+     */
+    private function shouldGrantAllPermissions()
+    {
+        if (method_exists($this, 'grantAllPermissions')) {
+            return $this->grantAllPermissions();
+        }
+        return false;
     }
 }
