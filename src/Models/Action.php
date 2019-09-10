@@ -11,7 +11,7 @@ class Action extends Model
 
     public function __construct(array $attributes = [])
     {
-        $this->table = config('batuta.tables.actions', 'batuta_actions');
+        $this->table = config('batuta.tables.actions', 'actions');
         parent::__construct($attributes);
     }
 
@@ -19,9 +19,21 @@ class Action extends Model
     {
         parent::boot();
 
-        self::saving(function (Action $resource) {
-            $resource->name = Str::slug($resource->name);
-            return $resource;
+        self::saving(function (Action $action) {
+            $action->verb = Str::slug($action->verb);
+            $action->resource = Str::slug($action->resource);
+            $action->name = $action->verb . ' ' . $action->resource;
         });
+    }
+
+    /**
+     * Returns an action by the name
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public static function findByName(string $name)
+    {
+        return self::where('name', $name)->get()->first();
     }
 }

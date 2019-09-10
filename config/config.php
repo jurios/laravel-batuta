@@ -18,13 +18,9 @@ return [
     |
     */
     'tables' => [
-        'resources'         => 'batuta_resources',
-        'actions'           => 'batuta_actions',
-        'roles'             => 'batuta_roles',
+        'actions'           => 'actions',
         'users'             => 'users',
-        'role_user'         => 'batuta_role_user',
-        'role_permissions'  => 'batuta_role_permissions',
-        'user_permissions'  => 'batuta_user_permissions'
+        'user_permissions'  => 'user_permissions'
     ],
 
     /*

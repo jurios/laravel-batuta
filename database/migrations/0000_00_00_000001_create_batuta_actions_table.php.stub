@@ -11,7 +11,7 @@ class CreateBatutaActionsTable extends Migration
 
     public function __construct()
     {
-        $this->table = config('batuta.tables.actions', 'batuta_actions');
+        $this->table = config('batuta.tables.actions', 'actions');
     }
 
     /**
@@ -21,13 +21,11 @@ class CreateBatutaActionsTable extends Migration
     {
         Schema::create($this->table, function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->nullable(false)->default(null);
-            $table->text('description')->nullable(true)->default(null);
 
-            $table->unsignedBigInteger('resource_id')->nullable(false)->default(null);
-            $table->foreign('resource_id')->references('id')
-                ->on(config('batuta.tables.resources', 'batuta_resources'))
-                ->onDelete('cascade');
+            $table->string('verb')->nullable(false)->default(null);
+            $table->string('resource')->nullable(false)->default(null);
+            $table->text('description')->nullable(true)->default(null);
+            $table->string('name')->nullable(false)->default(null);
         });
     }
 

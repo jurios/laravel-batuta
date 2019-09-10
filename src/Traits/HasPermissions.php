@@ -4,16 +4,31 @@
 namespace Kodilab\LaravelBatuta\Traits;
 
 
+use Illuminate\Support\Str;
 use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Pivots\Permission;
 
 trait HasPermissions
 {
+    /**
+     * Actions relationship (permissions)
+     *
+     * @return mixed
+     */
     public function actions()
     {
-        return $this->belongsToMany(Action::class, self::getPermissionsTable())
-            ->using(Permission::class)
-            ->withPivot(['permission']);
+        $table = method_exists($this, 'getPermissionsTable') ?
+            $this->getPermissionsTable() : $this->guessPermissionsTable();
+
+        return $this->belongsToMany(Action::class, $table)->using(Permission::class)->withPivot(['permission']);
+    }
+
+    /**
+     * By convention, the permission table for a model is "model_permissions".
+     */
+    private function guessPermissionsTable()
+    {
+        return Str::snake(class_basename($this)) . '_permissions';
     }
 
     /**

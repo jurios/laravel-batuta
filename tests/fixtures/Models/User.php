@@ -5,11 +5,11 @@ namespace Kodilab\LaravelBatuta\Tests\fixtures\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Kodilab\LaravelBatuta\Traits\UserPermissions;
+use Kodilab\LaravelBatuta\Traits\HasPermissions;
 
 class User extends Authenticatable
 {
-    use UserPermissions;
+    use HasPermissions;
     use Notifiable;
 
     /**
