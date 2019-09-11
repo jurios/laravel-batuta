@@ -63,6 +63,7 @@ class CreateBatutaRolesTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists($this->table_role_user);
         Schema::dropIfExists($this->table);
     }
 }
