@@ -4,31 +4,30 @@
 namespace Kodilab\LaravelBatuta\Traits;
 
 
-use Illuminate\Support\Str;
+use Kodilab\LaravelBatuta\Contracts\Permissionable;
 use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Pivots\Permission;
 
 trait HasPermissions
 {
+    protected static function bootHasPermissions()
+    {
+        if (!in_array(Permissionable::class, class_implements(self::class))) {
+            throw new \Exception(
+                sprintf("Class '%s' does not implement '%s' interface when is using '%s' trait",
+                    self::class, Permissionable::class, HasPermissions::class)
+            );
+        }
+    }
     /**
      * Actions relationship (permissions)
      *
      * @return mixed
      */
-    public function actions()
+    public function batuta_actions()
     {
-        $table = method_exists($this, 'getPermissionsTable') ?
-            $this->getPermissionsTable() : $this->guessPermissionsTable();
-
-        return $this->belongsToMany(Action::class, $table)->using(Permission::class)->withPivot(['permission']);
-    }
-
-    /**
-     * By convention, the permission table for a model is "model_permissions".
-     */
-    private function guessPermissionsTable()
-    {
-        return Str::snake(class_basename($this)) . '_permissions';
+        return $this->belongsToMany(Action::class, $this->getPermissionsTable())
+            ->using(Permission::class)->withPivot(['permission']);
     }
 
     /**
@@ -39,7 +38,7 @@ trait HasPermissions
      */
     public function updatePermission(Action $action, bool $permission)
     {
-        $this->actions()->sync([$action->id => ['permission' => $permission]], false);
+        $this->batuta_actions()->sync([$action->id => ['permission' => $permission]], false);
         $this->refresh();
     }
 
@@ -61,7 +60,7 @@ trait HasPermissions
             return ['permission' => $item];
         }, $permissions);
 
-        $this->actions()->sync($permissions, $detaching);
+        $this->batuta_actions()->sync($permissions, $detaching);
     }
 
     /**
@@ -76,7 +75,7 @@ trait HasPermissions
             return true;
         }
 
-        if (!is_null($permission = $this->actions()->find($action->id))) {
+        if (!is_null($permission = $this->batuta_actions()->find($action->id))) {
             return $permission->pivot->permission;
         }
 

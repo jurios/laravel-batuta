@@ -1,0 +1,68 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateBatutaRolesTable extends Migration
+{
+    /** @var string */
+    protected $table;
+
+    /** @var string */
+    protected $table_role_user;
+
+    public function __construct()
+    {
+        $this->table = config('batuta.tables.roles', 'roles');
+        $this->table_role_user = config('batuta.tables.role_user', 'role_user');
+    }
+
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::create($this->table, function (Blueprint $table) {
+            $table->bigIncrements('id');
+
+            $table->string('name')->unique()->nullable(false)->default(null);
+
+            $table->boolean('granted')->nullable(false)->default(false);
+            $table->boolean('default')->nullable(false)->default(false);
+
+            $table->timestamps();
+        });
+
+        Schema::create($this->table_role_user, function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->nullable(false)->default(null);
+            $table->foreign('user_id')->references('id')
+                    ->on(config('batuta.tables.users', 'users'))->onDelete('cascade');
+
+            $table->unsignedBigInteger('role_id')->nullable(false)->default(null);
+            $table->foreign('role_id')->references('id')
+                    ->on(config('batuta.tables.roles', 'roles'))->onDelete('cascade');
+        });
+
+        /*
+         * CREATE INITIAL ROLES
+         */
+        DB::table($this->table)->insert([
+            'name' => config('batuta.roles.granted.name', 'granted'),
+            'granted' => true
+        ]);
+
+        DB::table($this->table)->insert([
+            'name' => config('batuta.roles.default.name', 'default'),
+            'default' => true
+        ]);
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists($this->table);
+    }
+}

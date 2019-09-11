@@ -18,6 +18,34 @@ return [
     'tables' => [
         'actions'           => 'actions',
         'users'             => 'users',
-        'user_permissions'  => 'user_permissions'
+        'roles'             => 'roles',
+        'role_user'         => 'role_user',
+        'user_permissions'  => 'user_permissions',
+        'role_permissions'  => 'role_permissions'
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Roles
+    |--------------------------------------------------------------------------
+    |
+    | You must define two initial roles. Those roles will be created automatically
+    | for you. Here you can define a custom name for that roles.
+    |
+    |  - Granted: This role will be the role which will have all permissions granted
+    | always (you can't revoke permissions to the granted role).
+    |
+    | - Default: This role will be the role assigned to a user when is created. By default this role
+    | don't have any permission granted. You should grant permissions manually afterwards.
+    |
+    */
+    'roles' => [
+        'granted' => [
+            'name' => 'granted'
+        ],
+
+        'default' => [
+            'name' => 'default'
+        ]
     ]
 ];

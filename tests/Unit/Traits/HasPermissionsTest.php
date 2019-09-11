@@ -6,6 +6,7 @@ namespace Kodilab\LaravelBatuta\Tests\Unit\Traits;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Kodilab\LaravelBatuta\Models\Action;
+use Kodilab\LaravelBatuta\Tests\fixtures\Models\ModelNotImplementsPermissionable;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\User;
 use Kodilab\LaravelBatuta\Tests\TestCase;
 
@@ -28,13 +29,19 @@ class HasPermissionsTest extends TestCase
 
     }
 
+    public function test_hasPermissions_requires_implementing_Permissionable()
+    {
+        $this->expectException(\Exception::class);
+        new ModelNotImplementsPermissionable();
+    }
+
     public function test_updatePermission_should_update_a_permission()
     {
         $this->user->updatePermission($this->action, false);
-        $this->assertFalse($this->user->actions()->find($this->action->id)->pivot->permission);
+        $this->assertFalse($this->user->batuta_actions()->find($this->action->id)->pivot->permission);
 
         $this->user->updatePermission($this->action, true);
-        $this->assertTrue($this->user->actions()->find($this->action->id)->pivot->permission);
+        $this->assertTrue($this->user->batuta_actions()->find($this->action->id)->pivot->permission);
     }
 
     public function test_bulkPermissions_should_update_multiple_permissions()
@@ -50,7 +57,7 @@ class HasPermissionsTest extends TestCase
         $this->user->bulkPermissions($permissions);
 
         foreach ($permissions as $actionId => $permission) {
-            $this->assertEquals($permission, $this->user->actions()->find($actionId)->pivot->permission);
+            $this->assertEquals($permission, $this->user->batuta_actions()->find($actionId)->pivot->permission);
         }
     }
 
@@ -65,7 +72,7 @@ class HasPermissionsTest extends TestCase
         }
         $this->user->bulkPermissions($permissions);
 
-        $this->assertTrue($this->user->actions()->find($this->action->id)->pivot->permission);
+        $this->assertTrue($this->user->batuta_actions()->find($this->action->id)->pivot->permission);
     }
 
     public function test_bulkPermissions_with_detaching_mode_should_remove_previous_permissions()
@@ -79,7 +86,7 @@ class HasPermissionsTest extends TestCase
         }
         $this->user->bulkPermissions($permissions, true);
 
-        $this->assertNull($this->user->actions()->find($this->action->id));
+        $this->assertNull($this->user->batuta_actions()->find($this->action->id));
     }
 
     public function test_hasPermission_should_return_true_if_the_permission_is_set_and_is_true()
