@@ -7,6 +7,8 @@ namespace Kodilab\LaravelBatuta\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
+use Kodilab\LaravelBatuta\Contracts\Permissionable;
+use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Models\Role;
 
 trait HasRoles
@@ -14,6 +16,15 @@ trait HasRoles
     protected static function bootHasRoles()
     {
         self::retrieved(function (Model $model) {
+            if ($model->batuta_roles()->get()->isEmpty()) {
+                DB::table(config('batuta.tables.role_user', 'role_user'))->insert([
+                    'role_id' => Role::getDefault()->id,
+                    'user_id' => $model->id
+                ]);
+            }
+        });
+
+        self::saved(function (Model $model) {
             if ($model->batuta_roles()->get()->isEmpty()) {
                 DB::table(config('batuta.tables.role_user', 'role_user'))->insert([
                     'role_id' => Role::getDefault()->id,
@@ -78,10 +89,33 @@ trait HasRoles
      * Returns whether it belongs to a role
      *
      * @param Role $role
+     * @return bool
      */
     public function belongsToRole(Role $role)
     {
         return !is_null($this->batuta_roles()->find($role->id));
+    }
+
+    /**
+     * Returns true if at least one role is granted for that action. False if any role is granted.
+     *
+     * @param Action $action
+     * @return bool
+     */
+    public function getInheritedPermission(Action $action)
+    {
+        if (!in_array(Permissionable::class, class_implements(self::class))) {
+            return false;
+        }
+
+        /** @var Permissionable $role */
+        foreach ($this->batuta_roles as $role) {
+            if ($role->hasPermission($action)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

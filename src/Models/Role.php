@@ -5,9 +5,9 @@ namespace Kodilab\LaravelBatuta\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\QueryException;
 use Kodilab\LaravelBatuta\Contracts\Permissionable;
 use Kodilab\LaravelBatuta\Exceptions\DefaultRoleNotFound;
+use Kodilab\LaravelBatuta\Exceptions\GrantedRoleNotFound;
 use Kodilab\LaravelBatuta\Traits\HasPermissions;
 
 class Role extends Model implements Permissionable
@@ -41,16 +41,41 @@ class Role extends Model implements Permissionable
         });
     }
 
+    /**
+     * Returns the name of the permissions table
+     *
+     * @return \Illuminate\Config\Repository|mixed
+     */
     public function getPermissionsTable()
     {
         return config('batuta.tables.role_permissions', 'role_permissions');
     }
 
+    /**
+     * Returns whether this role is the default role
+     *
+     * @return mixed
+     */
     public function isDefault()
     {
         return $this->default;
     }
 
+    /**
+     * Returns whether this role should grant all permissions
+     *
+     * @return mixed
+     */
+    public function grantAllPermissions()
+    {
+        return $this->granted;
+    }
+
+    /**
+     * Returns the default role. If it does not exist, then an exception is thrown
+     *
+     * @return mixed
+     */
     public static function getDefault()
     {
         if (is_null($default = Role::where('default', true)->get()->first())) {
@@ -58,5 +83,19 @@ class Role extends Model implements Permissionable
         }
 
         return $default;
+    }
+
+    /**
+     * Returns the all granted permissions role. If it does not exist, then an exception is thrown.
+     *
+     * @return mixed
+     */
+    public static function getGranted()
+    {
+        if (is_null($granted = Role::where('granted', true)->get()->first())) {
+            throw new GrantedRoleNotFound();
+        }
+
+        return $granted;
     }
 }

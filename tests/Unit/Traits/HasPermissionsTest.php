@@ -6,6 +6,7 @@ namespace Kodilab\LaravelBatuta\Tests\Unit\Traits;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Kodilab\LaravelBatuta\Models\Action;
+use Kodilab\LaravelBatuta\Models\Role;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\ModelNotImplementsPermissionable;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\User;
 use Kodilab\LaravelBatuta\Tests\TestCase;
@@ -17,6 +18,9 @@ class HasPermissionsTest extends TestCase
     /** @var User */
     protected $user;
 
+    /** @var Role */
+    protected $role;
+
     /** @var Action */
     protected $action;
 
@@ -26,7 +30,7 @@ class HasPermissionsTest extends TestCase
 
         $this->user = factory(User::class)->create();
         $this->action = factory(Action::class)->create();
-
+        $this->role = factory(Role::class)->create();
     }
 
     public function test_hasPermissions_requires_implementing_Permissionable()
@@ -110,18 +114,68 @@ class HasPermissionsTest extends TestCase
         $this->assertFalse($this->user->hasPermission($this->action));
     }
 
-    public function test_hasPermission_should_return_true_if_grantAllPermissions_returns_true()
+    public function test_hasPermission_should_return_true_if_belongs_to_all_grant_permissions_role()
     {
-        $this->user->grant_all = true;
+        $this->user->addRole(Role::getGranted());
 
-        $this->user->updatePermission($this->action, false);
+        Role::getGranted()->updatePermission($this->action, false);
 
         $this->assertTrue($this->user->hasPermission($this->action));
+    }
 
-        $this->user->grant_all = false;
+    public function test_hasPermissions_should_return_true_if_the_role_is_granted()
+    {
+        /** @var Role $role */
+        $role = Role::getGranted();
+        $role->updatePermission($this->action, false);
+
+        $this->assertTrue($role->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_should_return_true_if_the_permission_is_not_set_and_a_role_has_the_permission()
+    {
+        $this->user->addRole($this->role);
+        $this->role->updatePermission($this->action, true);
+
+        $this->assertTrue($this->user->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_should_return_false_if_the_permission_is_not_set_and_a_role_does_not_have_the_permission()
+    {
+        $this->user->addRole($this->role);
+        $this->role->updatePermission($this->action, false);
+
+        $this->assertFalse($this->user->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_should_return_false_if_the_permission_is_set_false_and_a_role_is_granted_over_the_permission()
+    {
+        $this->user->addRole($this->role);
+        $this->role->updatePermission($this->action, true);
 
         $this->user->updatePermission($this->action, false);
 
         $this->assertFalse($this->user->hasPermission($this->action));
     }
+
+    public function test_hasPermission_should_return_true_if_the_permission_is_set_true_and_a_role_is_not_granted_over_the_permission()
+    {
+        $this->user->addRole($this->role);
+        $this->role->updatePermission($this->action, false);
+
+        $this->user->updatePermission($this->action, true);
+
+        $this->assertTrue($this->user->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_is_not_inherited_if_the_flag_is_set_to_false()
+    {
+        $this->user->addRole($this->role);
+        $this->role->updatePermission($this->action, true);
+
+        $this->user->inheritPermissions = false;
+
+        $this->assertFalse($this->user->hasPermission($this->action));
+    }
+
 }

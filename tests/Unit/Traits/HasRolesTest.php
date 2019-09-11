@@ -4,6 +4,7 @@
 namespace Kodilab\LaravelBatuta\Tests\Unit\Traits;
 
 
+use Illuminate\Support\Facades\DB;
 use Kodilab\LaravelBatuta\Models\Role;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\User;
 use Kodilab\LaravelBatuta\Tests\TestCase;
@@ -24,10 +25,22 @@ class HasRolesTest extends TestCase
         $this->role = factory(Role::class)->create();
     }
 
-    public function test_empty_roles_should_add_default_role_in_runtime()
+    public function test_automatically_add_default_role_when_a_item_without_roles_is_retrieved()
+    {
+        $userData = factory(User::class)->make()->toArray();
+
+        DB::table(config('batuta.tables.user', 'users'))->insert($userData);
+
+        /** @var User $user */
+        $user = User::where('email', $userData['email'])->get()->first();
+
+        $this->assertNotNull($user->batuta_roles()->find(Role::getDefault()->id));
+    }
+
+    public function test_automatically_add_default_role_when_a_item_without_roles_is_persisted()
     {
         /** @var User $user */
-        $user = factory(User::class)->create()->refresh();
+        $user = factory(User::class)->create();
 
         $this->assertNotNull($user->batuta_roles()->find(Role::getDefault()->id));
     }

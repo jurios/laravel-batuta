@@ -14,15 +14,15 @@ class User extends Authenticatable implements Permissionable
     use HasPermissions, HasRoles;
     use Notifiable;
 
-    public $grant_all = false;
+    public $inheritPermissions = true;
 
     public function getPermissionsTable()
     {
         return config('batuta.tables.user_permissions', 'user_permissions');
     }
 
-    public function grantAllPermissions()
+    private function shouldInheritPermissions()
     {
-        return $this->grant_all;
+        return $this->inheritPermissions;
     }
 }

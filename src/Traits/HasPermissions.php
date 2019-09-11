@@ -19,6 +19,7 @@ trait HasPermissions
             );
         }
     }
+
     /**
      * Actions relationship (permissions)
      *
@@ -77,6 +78,11 @@ trait HasPermissions
 
         if (!is_null($permission = $this->batuta_actions()->find($action->id))) {
             return $permission->pivot->permission;
+        }
+
+        if (! method_exists($this, 'shouldInheritPermissions') || $this->shouldInheritPermissions()) {
+            return method_exists($this, 'getInheritedPermission') ?
+                $this->getInheritedPermission($action) : false;
         }
 
         return false;
