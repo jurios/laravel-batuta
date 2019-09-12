@@ -97,7 +97,7 @@ trait HasRoles
     }
 
     /**
-     * Returns true if at least one role is granted for that action. False if any role is granted.
+     * Returns true if at least one of roles is granted for a given action. False if any role is granted.
      *
      * @param Action $action
      * @return bool
@@ -116,6 +116,16 @@ trait HasRoles
         }
 
         return false;
+    }
+
+    /**
+     * Returns whether it belongs to god role
+     *
+     * @return bool
+     */
+    public function isGod()
+    {
+        return !is_null($this->batuta_roles()->find(Role::getGod()->id));
     }
 
 }

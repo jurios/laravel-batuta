@@ -72,7 +72,7 @@ trait HasPermissions
      */
     public function hasPermission(Action $action)
     {
-        if ($this->shouldGrantAllPermissions()) {
+        if ($this->isGod()) {
             return true;
         }
 

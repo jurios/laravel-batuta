@@ -28,7 +28,7 @@ class CreateBatutaRolesTable extends Migration
 
             $table->string('name')->unique()->nullable(false)->default(null);
 
-            $table->boolean('granted')->nullable(false)->default(false);
+            $table->boolean('god')->nullable(false)->default(false);
             $table->boolean('default')->nullable(false)->default(false);
 
             $table->timestamps();
@@ -48,8 +48,8 @@ class CreateBatutaRolesTable extends Migration
          * CREATE INITIAL ROLES
          */
         DB::table($this->table)->insert([
-            'name' => config('batuta.roles.granted.name', 'granted'),
-            'granted' => true
+            'name' => config('batuta.roles.god.name', 'god'),
+            'god' => true
         ]);
 
         DB::table($this->table)->insert([

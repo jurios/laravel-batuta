@@ -6,7 +6,7 @@ namespace Kodilab\LaravelBatuta\Tests\Unit;
 
 use Illuminate\Support\Facades\DB;
 use Kodilab\LaravelBatuta\Exceptions\DefaultRoleNotFound;
-use Kodilab\LaravelBatuta\Exceptions\GrantedRoleNotFound;
+use Kodilab\LaravelBatuta\Exceptions\GodRoleNotFound;
 use Kodilab\LaravelBatuta\Models\Role;
 use Kodilab\LaravelBatuta\Tests\TestCase;
 
@@ -46,20 +46,20 @@ class RoleTest extends TestCase
         Role::getDefault();
     }
 
-    public function test_getGranted_should_return_the_granted_role()
+    public function test_getGod_should_return_the_god_role()
     {
-        $granted = Role::where('granted', true)->get()->first();
+        $god = Role::where('god', true)->get()->first();
 
-        $this->assertTrue($granted->is(Role::getGranted()));
+        $this->assertTrue($god->is(Role::getGod()));
     }
 
-    public function test_getGranted_should_throw_an_exception_if_granted_role_does_not_exists()
+    public function test_getGod_should_throw_an_exception_if_god_role_does_not_exists()
     {
-        $this->expectException(GrantedRoleNotFound::class);
+        $this->expectException(GodRoleNotFound::class);
 
         DB::table(config('batuta.tables.roles', 'roles'))
-            ->where('granted', true)->delete();
+            ->where('god', true)->delete();
 
-        Role::getGranted();
+        Role::getGod();
     }
 }

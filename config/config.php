@@ -32,16 +32,15 @@ return [
     | You must define two initial roles. Those roles will be created automatically
     | for you. Here you can define a custom name for that roles.
     |
-    |  - Granted: This role will be the role which will have all permissions granted
-    | always (you can't revoke permissions to the granted role).
+    | - God: This role will be granted for all permissions. You can not revoke any permission to this role.
     |
     | - Default: This role will be the role assigned to a user when is created. By default this role
     | don't have any permission granted. You should grant permissions manually afterwards.
     |
     */
     'roles' => [
-        'granted' => [
-            'name' => 'granted'
+        'god' => [
+            'name' => 'god'
         ],
 
         'default' => [

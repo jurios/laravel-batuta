@@ -7,17 +7,17 @@ namespace Kodilab\LaravelBatuta\Models;
 use Illuminate\Database\Eloquent\Model;
 use Kodilab\LaravelBatuta\Contracts\Permissionable;
 use Kodilab\LaravelBatuta\Exceptions\DefaultRoleNotFound;
-use Kodilab\LaravelBatuta\Exceptions\GrantedRoleNotFound;
+use Kodilab\LaravelBatuta\Exceptions\GodRoleNotFound;
 use Kodilab\LaravelBatuta\Traits\HasPermissions;
 
 class Role extends Model implements Permissionable
 {
     use HasPermissions;
 
-    protected $fillable = ['name', 'granted', 'default'];
+    protected $fillable = ['name', 'god', 'default'];
 
     protected $casts = [
-        'granted' => 'boolean',
+        'god' => 'boolean',
         'default' => 'boolean'
     ];
 
@@ -61,14 +61,9 @@ class Role extends Model implements Permissionable
         return $this->default;
     }
 
-    /**
-     * Returns whether this role should grant all permissions
-     *
-     * @return mixed
-     */
-    public function grantAllPermissions()
+    public function isGod()
     {
-        return $this->granted;
+        return $this->god;
     }
 
     /**
@@ -86,16 +81,16 @@ class Role extends Model implements Permissionable
     }
 
     /**
-     * Returns the all granted permissions role. If it does not exist, then an exception is thrown.
+     * Returns god role. If it does not exist, then an exception is thrown.
      *
      * @return mixed
      */
-    public static function getGranted()
+    public static function getGod()
     {
-        if (is_null($granted = Role::where('granted', true)->get()->first())) {
-            throw new GrantedRoleNotFound();
+        if (is_null($god = Role::where('god', true)->get()->first())) {
+            throw new GodRoleNotFound();
         }
 
-        return $granted;
+        return $god;
     }
 }

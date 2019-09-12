@@ -116,9 +116,9 @@ class HasPermissionsTest extends TestCase
 
     public function test_hasPermission_should_return_true_if_belongs_to_all_grant_permissions_role()
     {
-        $this->user->addRole(Role::getGranted());
+        $this->user->addRole(Role::getGod());
 
-        Role::getGranted()->updatePermission($this->action, false);
+        Role::getGod()->updatePermission($this->action, false);
 
         $this->assertTrue($this->user->hasPermission($this->action));
     }
@@ -126,7 +126,7 @@ class HasPermissionsTest extends TestCase
     public function test_hasPermissions_should_return_true_if_the_role_is_granted()
     {
         /** @var Role $role */
-        $role = Role::getGranted();
+        $role = Role::getGod();
         $role->updatePermission($this->action, false);
 
         $this->assertTrue($role->hasPermission($this->action));
@@ -148,7 +148,7 @@ class HasPermissionsTest extends TestCase
         $this->assertFalse($this->user->hasPermission($this->action));
     }
 
-    public function test_hasPermission_should_return_false_if_the_permission_is_set_false_and_a_role_is_granted_over_the_permission()
+    public function test_hasPermission_should_return_false_if_the_permission_is_set_false_and_a_role_is_granted_for_the_permission()
     {
         $this->user->addRole($this->role);
         $this->role->updatePermission($this->action, true);
@@ -158,7 +158,7 @@ class HasPermissionsTest extends TestCase
         $this->assertFalse($this->user->hasPermission($this->action));
     }
 
-    public function test_hasPermission_should_return_true_if_the_permission_is_set_true_and_a_role_is_not_granted_over_the_permission()
+    public function test_hasPermission_should_return_true_if_the_permission_is_set_true_and_a_role_is_not_granted_for_the_permission()
     {
         $this->user->addRole($this->role);
         $this->role->updatePermission($this->action, false);

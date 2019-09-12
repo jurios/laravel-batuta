@@ -117,4 +117,15 @@ class HasRolesTest extends TestCase
 
         $this->assertTrue($this->user->belongsToRole($this->role));
     }
+
+    public function test_isGod_should_return_true_if_it_belongs_to_god_role()
+    {
+        $this->user->addRole($this->role);
+
+        $this->assertFalse($this->user->isGod());
+
+        $this->user->addRole(Role::getGod());
+
+        $this->assertTrue($this->user->isGod());
+    }
 }
