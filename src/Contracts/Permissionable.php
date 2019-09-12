@@ -18,11 +18,11 @@ interface Permissionable
      * Updates a permission (or create if it does not exist). If detaching is true, then the previous permissions are
      * removed
      *
-     * @param array $permissions
-     * @param bool $detaching
+     * @param $action
+     * @param bool $grant
      * @return mixed
      */
-    public function updatePermission(Action $action, bool $detaching);
+    public function updatePermission($action, bool $grant);
 
     /**
      * Updates multiple permissions
@@ -36,9 +36,9 @@ interface Permissionable
     /**
      * Returns whether it has permission or not for the given action
      *
-     * @param Action $action
+     * @param mixed $action
      * @return bool
      */
-    public function hasPermission(Action $action);
+    public function hasPermission($action);
 
 }

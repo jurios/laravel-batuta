@@ -5,6 +5,7 @@ namespace Kodilab\LaravelBatuta\Tests\Unit\Traits;
 
 
 use Illuminate\Foundation\Testing\WithFaker;
+use Kodilab\LaravelBatuta\Exceptions\ActionNotFound;
 use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Models\Role;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\ModelNotImplementsPermissionable;
@@ -42,10 +43,35 @@ class HasPermissionsTest extends TestCase
     public function test_updatePermission_should_update_a_permission()
     {
         $this->user->updatePermission($this->action, false);
-        $this->assertFalse($this->user->batuta_actions()->find($this->action->id)->pivot->permission);
+        $this->assertFalse($this->user->batuta_actions()->find($this->action->id)->pivot->granted);
 
         $this->user->updatePermission($this->action, true);
-        $this->assertTrue($this->user->batuta_actions()->find($this->action->id)->pivot->permission);
+        $this->assertTrue($this->user->batuta_actions()->find($this->action->id)->pivot->granted);
+    }
+
+    public function test_updatePermission_should_throw_an_exception_if_the_action_is_not_persisted()
+    {
+        $this->expectException(ActionNotFound::class);
+
+        $action = factory(Action::class)->make();
+
+        $this->user->updatePermission($action, true);
+    }
+
+    public function test_updatePermission_using_the_name_should_update_a_permission()
+    {
+        $this->user->updatePermission($this->action->name, false);
+        $this->assertFalse($this->user->batuta_actions()->find($this->action->id)->pivot->granted);
+
+        $this->user->updatePermission($this->action->name, true);
+        $this->assertTrue($this->user->batuta_actions()->find($this->action->id)->pivot->granted);
+    }
+
+    public function test_updatePermission_using_the_name_should_throw_an_exception_if_the_name_does_not_exists()
+    {
+        $this->expectException(ActionNotFound::class);
+
+        $this->user->updatePermission($this->faker->word, false);
     }
 
     public function test_bulkPermissions_should_update_multiple_permissions()
@@ -61,7 +87,7 @@ class HasPermissionsTest extends TestCase
         $this->user->bulkPermissions($permissions);
 
         foreach ($permissions as $actionId => $permission) {
-            $this->assertEquals($permission, $this->user->batuta_actions()->find($actionId)->pivot->permission);
+            $this->assertEquals($permission, $this->user->batuta_actions()->find($actionId)->pivot->granted);
         }
     }
 
@@ -76,7 +102,7 @@ class HasPermissionsTest extends TestCase
         }
         $this->user->bulkPermissions($permissions);
 
-        $this->assertTrue($this->user->batuta_actions()->find($this->action->id)->pivot->permission);
+        $this->assertTrue($this->user->batuta_actions()->find($this->action->id)->pivot->granted);
     }
 
     public function test_bulkPermissions_with_detaching_mode_should_remove_previous_permissions()
@@ -114,7 +140,32 @@ class HasPermissionsTest extends TestCase
         $this->assertFalse($this->user->hasPermission($this->action));
     }
 
-    public function test_hasPermission_should_return_true_if_belongs_to_all_grant_permissions_role()
+    public function test_hasPermission_should_throw_an_exception_if_the_action_does_not_exist()
+    {
+        $this->expectException(ActionNotFound::class);
+
+        $this->user->hasPermission(factory(Action::class)->make());
+    }
+
+    public function test_hasPermission_should_return_the_permission_using_the_action_name()
+    {
+        $this->user->updatePermission($this->action, true);
+
+        $this->assertTrue($this->user->hasPermission($this->action->name));
+
+        $this->user->updatePermission($this->action, false);
+
+        $this->assertFalse($this->user->hasPermission($this->action->name));
+    }
+
+    public function test_hasPermission_should_throw_an_exception_if_the_action_name_does_not_exist()
+    {
+        $this->expectException(ActionNotFound::class);
+
+        $this->user->hasPermission($this->faker->word);
+    }
+
+    public function test_hasPermission_should_return_true_if_belongs_to_god_role()
     {
         $this->user->addRole(Role::getGod());
 
@@ -123,7 +174,7 @@ class HasPermissionsTest extends TestCase
         $this->assertTrue($this->user->hasPermission($this->action));
     }
 
-    public function test_hasPermissions_should_return_true_if_the_role_is_granted()
+    public function test_hasPermissions_should_return_true_if_the_role_is_god()
     {
         /** @var Role $role */
         $role = Role::getGod();

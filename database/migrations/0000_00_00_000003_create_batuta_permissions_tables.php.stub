@@ -32,7 +32,7 @@ class CreateBatutaPermissionsTables extends Migration
             $table->foreign('action_id')->references('id')
                         ->on(config('batuta.tables.actions', 'actions'))->onDelete('cascade');
 
-            $table->boolean('permission')->nullable(false)->default(false);
+            $table->boolean('granted')->nullable(false)->default(false);
         });
 
         Schema::create($this->table_role_permissions, function (Blueprint $table) {
@@ -44,7 +44,7 @@ class CreateBatutaPermissionsTables extends Migration
             $table->foreign('action_id')->references('id')
                         ->on(config('batuta.tables.actions', 'actions'))->onDelete('cascade');
 
-            $table->boolean('permission')->nullable(false)->default(false);
+            $table->boolean('granted')->nullable(false)->default(false);
         });
     }
 

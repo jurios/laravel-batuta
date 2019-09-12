@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Kodilab\LaravelBatuta\Contracts\Permissionable;
 use Kodilab\LaravelBatuta\Exceptions\DefaultRoleNotFound;
 use Kodilab\LaravelBatuta\Exceptions\GodRoleNotFound;
-use Kodilab\LaravelBatuta\Traits\HasPermissions;
+use Kodilab\LaravelBatuta\Traits\RolePermissions;
 
 class Role extends Model implements Permissionable
 {
-    use HasPermissions;
+    use RolePermissions;
 
     protected $fillable = ['name', 'god', 'default'];
 
@@ -39,16 +39,6 @@ class Role extends Model implements Permissionable
             }
 
         });
-    }
-
-    /**
-     * Returns the name of the permissions table
-     *
-     * @return \Illuminate\Config\Repository|mixed
-     */
-    public function getPermissionsTable()
-    {
-        return config('batuta.tables.role_permissions', 'role_permissions');
     }
 
     /**

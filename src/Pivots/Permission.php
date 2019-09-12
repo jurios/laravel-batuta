@@ -9,6 +9,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class Permission extends Pivot
 {
     protected $casts = [
-        'permission' => 'boolean'
+        'granted' => 'boolean'
     ];
 }

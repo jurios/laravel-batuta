@@ -5,6 +5,7 @@ namespace Kodilab\LaravelBatuta\Traits;
 
 
 use Kodilab\LaravelBatuta\Contracts\Permissionable;
+use Kodilab\LaravelBatuta\Exceptions\ActionNotFound;
 use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Pivots\Permission;
 
@@ -28,18 +29,20 @@ trait HasPermissions
     public function batuta_actions()
     {
         return $this->belongsToMany(Action::class, $this->getPermissionsTable())
-            ->using(Permission::class)->withPivot(['permission']);
+            ->using(Permission::class)->withPivot(['granted']);
     }
 
     /**
-     * Update a permission over an action
+     * Update a permission over an action. Both, action instance or action name are allowed as input.
      *
-     * @param Action $action
-     * @param bool $permission
+     * @param mixed $action
+     * @param bool $grant
      */
-    public function updatePermission(Action $action, bool $permission)
+    public function updatePermission($action, bool $grant)
     {
-        $this->batuta_actions()->sync([$action->id => ['permission' => $permission]], false);
+        $action = $this->getActionInstanceOrFail($action);
+
+        $this->batuta_actions()->sync([$action->id => ['granted' => $grant]], false);
         $this->refresh();
     }
 
@@ -58,26 +61,28 @@ trait HasPermissions
     public function bulkPermissions(array $permissions, bool $detaching = false)
     {
         $permissions = array_map(function ($item) {
-            return ['permission' => $item];
+            return ['granted' => $item];
         }, $permissions);
 
         $this->batuta_actions()->sync($permissions, $detaching);
     }
 
     /**
-     * Returns whether a permission is granted.
+     * Returns whether a permission is granted. Both action instance or action name are allowed as input.
      *
-     * @param Action $action
+     * @param mixed $action
      * @return bool
      */
-    public function hasPermission(Action $action)
+    public function hasPermission($action)
     {
+        $action = $this->getActionInstanceOrFail($action);
+
         if ($this->isGod()) {
             return true;
         }
 
         if (!is_null($permission = $this->batuta_actions()->find($action->id))) {
-            return $permission->pivot->permission;
+            return $permission->pivot->granted;
         }
 
         if (! method_exists($this, 'shouldInheritPermissions') || $this->shouldInheritPermissions()) {
@@ -99,5 +104,24 @@ trait HasPermissions
             return $this->grantAllPermissions();
         }
         return false;
+    }
+
+    /**
+     * Returns the persisted action. If action is the action name, look for the action.
+     *
+     * @param $action
+     * @return Action
+     */
+    private function getActionInstanceOrFail($action)
+    {
+        if (is_string($action) && !is_null($action_instance = Action::findByName($action))) {
+            $action = $action_instance;
+        }
+
+        if (!is_string($action) && get_class($action) === Action::class && $action->exists) {
+            return $action;
+        }
+
+        throw new ActionNotFound(sprintf('Action \'%s\' not found', $action));
     }
 }
