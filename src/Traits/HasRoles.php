@@ -102,7 +102,7 @@ trait HasRoles
      * @param Action $action
      * @return bool
      */
-    public function getInheritedPermission(Action $action)
+    private function getInheritedPermission(Action $action)
     {
         if (!in_array(Permissionable::class, class_implements(self::class))) {
             return false;

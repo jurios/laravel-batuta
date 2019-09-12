@@ -38,7 +38,7 @@ composer require kodilab/laravel-batuta
 ```
 
 Once the dependency is added to your project, you must publish the required migrations. Those migrations will create the
-tables required by `laravel-batuta`. The basic [initial roles]() will be created, also. With the following command, 
+tables required by `laravel-batuta`. The basic [initial roles](#initial-roles) will be created, also. With the following command, 
 the migrations files will be generated:
 
 ```
@@ -62,6 +62,16 @@ php artisan migrate
 ```
 
 Congratulations, `laravel-batuta` has been installed and configured to be used!
+
+## BatutaBuilder
+For some of the following section it's suggested use of `BatutaBuilder`. This class provide some
+helper methods for managing `actions` and `roles`. Is important to know that all those methods uses directly 
+`QueryBuilder` under the hood in order to avoid instance `Eloquent Models`. 
+This allow us to use `BatutaBuilder` in `migration` files without any problem.
+
+Please, take this into consideration as they won't fire `Eloquent ORM` events. If you want to use
+`Eloquent ORM` features, manage `actions` and `roles` using the `create()` and `delete()` methods provided
+by `Eloquen`. 
 
 ## Actions
 
@@ -110,7 +120,7 @@ and resource `Item` generates the following `action`:
 * `name` : 'update-price item'
 
 #### removeAction(string $verb, string $resource)
-Remove an existing action.
+Remove an existing action based on the action `verb` and the `resource`.
 
 ## Roles
 A Role is a group of granted permissions. You can assign multiple roles to a user and multiple users to a role 
@@ -119,9 +129,125 @@ inherits the permissions from the roles. So, for example, if `update-price item`
 look if any of the roles has `update-price item` granted. That behaviour can be changed for any case of user and role 
 (go to [disabling permission inheritance](#disabling-permission-inheritance)). 
 
+### Initial roles
+By default, `laravel-batuta` creates two `initial roles` when you run the `migrations`. You can customize the names of
+its role by changing the name on the configuration file **before** you run the migrations.
+If you want to change it afterwards, then you can do it updating the model or changing it on the database.
+
+Those roles are important because both have some "special" behaviours:
+
+* **Default role**: Default role will be the role assigned by default to users when a user is created
+or doesn't have one (at least, one role must be assigned to a user). This only happens when you [enable roles]() for you
+user model. This role can **not** be removed.
+ 
+* **God role**: The god role is a special role. Each user who belongs to this role will be granted to do
+any action. No matter if you change the permission for that user or for that role. **It will always have full granted 
+permissions**. This role can **not** be removed.
+
+ 
 ### Creating and removing roles
+As you did for creating `actions`, you can use `BatutaBuilder` for managing `Roles` as well.
+```(php)
+use Kodilab\LaravelBatuta\Builder\BatutaBuilder;
+
+class CreateBatutaPermissionsTables extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        BatutaBuilder::createRole('editor')
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        BatutaBuilder::removeRole('editor');
+    }
+}
+```
+
+#### createRole(string $name)
+Creates a new role.
+
+#### removeAction(string $verb, string $resource)
+Remove an existing role based on the name.
 
 ### Assign and detach roles to users
+In order to assign roles to a user and detach them, you must add the `HasRoles` trait to the `User` model:
+```
+class User extends Model
+{
+    use HasRoles;
+}
+``` 
+
+Once you add this trait, you can use the following methods:
+
+
+#### addRole(Role $role)
+Add a new role, if it is not already added, to the user. Once a role is added to the user, it will inherits the role
+permissions.
+
+* **Role $role**: The `Role` instance to be assigned.
+
+```
+use Kodilab\LaravelBatuta\Models\Role;
+
+...
+
+$role = Role::find(1);
+
+$user->addRole($role);
+```
+
+#### public function bulkRoles(array $roleIds, bool $detaching = false)
+Adds a group of roles.
+
+* **array $roleIds**: Array which contains `Role` ids.
+* **bool $detaching = false**: If `detaching = true` then the previous roles assigned to the user will be removed.
+
+```
+$roles = [1, 2];
+
+$user->bulkRoles($roles, true);
+```
+
+#### public function removeRole(Role $role)
+Removes a role from the users assignments.
+
+* **Role $role**: The `Role` instance to be assigned.
+
+```
+$role = Role::find(1);
+
+$user->addRole($role);
+$user->removeRole($role);
+```
+ 
+#### public function belongsToRole(Role $role)
+Returns whether a role is assigned to a user
+
+* **Role $role**: The `Role` instance to be assigned.
+
+**Returns:**
+* `true`: The user belongs to this role
+* `false`: The user doesn't belongs to this role
+```
+$user->belongsToRole($other);
+```
+
+#### public function isGod()
+Returns whether the user belongs to the `god role`:
+**Returns:**
+* `true`: The user belongs to the `god role`
+* `false`: The user doesn't belongs to the `god role`
+```
+$user->isGod();
+```
  
 ## Granting permissions
 Despite of the fact `Role` is ready to be used, changes in the `User` model must be done in order to provide 
