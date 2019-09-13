@@ -74,7 +74,6 @@ Please, take this into consideration as they won't fire `Eloquent ORM` events. I
 by `Eloquen`. 
 
 ## Actions
-
 As explained in the [concept section](#some-concepts), actions represents what a user can do over a resource. In the
 previous example, a item's actions could be, for example, `create`, `read`, `write`. 
 We could create more specific actions in order to restrict the authorization like: 
@@ -111,7 +110,7 @@ class CreateBatutaPermissionsTables extends Migration
 }
 ```
 
-#### createAction(string $verb, string $resource, string $description = false)
+#### public static function createAction(string $verb, string $resource, string $description = null)
 Creates a new action. `verb` and `resource` will be `slugged` before creation. So, for example `verb='update price'` 
 and resource `Item` generates the following `action`:
 
@@ -119,8 +118,21 @@ and resource `Item` generates the following `action`:
 * `resource` : 'item'
 * `name` : 'update-price item'
 
-#### removeAction(string $verb, string $resource)
+#### public static function removeAction(string $verb, string $resource = null)
 Remove an existing action based on the action `verb` and the `resource`.
+
+### Retrieving actions
+### public static function findByName(string $name)
+Retrieve an action by its name
+
+* **string $name**: The action's `name`.
+
+**Returns:**
+* The `action` instance or null if it does not exist
+```
+Actions::findByName('update-price item');
+```
+
 
 ## Roles
 A Role is a group of granted permissions. You can assign multiple roles to a user and multiple users to a role 
@@ -173,8 +185,8 @@ class CreateBatutaPermissionsTables extends Migration
 #### createRole(string $name)
 Creates a new role.
 
-#### removeAction(string $verb, string $resource)
-Remove an existing role based on the name.
+#### removeRole(string $verb, string $resource)
+Remove an existing role based on the name. 
 
 ### Assign and detach roles to users
 In order to assign roles to a user and detach them, you must add the `HasRoles` trait to the `User` model:
@@ -186,8 +198,6 @@ class User extends Model
 ``` 
 
 Once you add this trait, you can use the following methods:
-
-
 #### addRole(Role $role)
 Add a new role, if it is not already added, to the user. Once a role is added to the user, it will inherits the role
 permissions.
