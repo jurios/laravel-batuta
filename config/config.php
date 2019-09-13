@@ -10,49 +10,41 @@ return [
     | each table in order to fit your database. Next, you can see what is each
     | table for:
     |
-    | "resources" table: Contains all the resources created
     | "actions" table: Contains all the actions for each resource
-    | "users" table: Contains all users (by default Laravel creates table 'users')
     | "roles": Contains all the roles created (included roles created by Laravel-batuta)
+    | "user_permissions": Contains all the permissions assigned to each user
     | "role_permissions": Contains all the permissions assigned to each role
-    |
     */
     'tables' => [
-        'resources'         => 'batuta_resources',
-        'actions'           => 'batuta_actions',
-        'roles'             => 'batuta_roles',
+        'actions'           => 'actions',
         'users'             => 'users',
-        'role_user'         => 'batuta_role_user',
-        'role_permissions'  => 'batuta_role_permissions',
-        'user_permissions'  => 'batuta_user_permissions'
+        'roles'             => 'roles',
+        'role_user'         => 'role_user',
+        'user_permissions'  => 'user_permissions',
+        'role_permissions'  => 'role_permissions'
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | User Model
-    |--------------------------------------------------------------------------
-    |
-    | In case you are not using the User model provided by Laravel, here you
-    | can define your our custom User model
-    |
-    */
-    'user_model' => \App\User::class,
 
     /*
     |--------------------------------------------------------------------------
     | Roles
     |--------------------------------------------------------------------------
     |
-    | Laravel-batuta will create 2 basic roles. Here you can edit the name for
-    | each basic roles:
+    | You must define two initial roles. Those roles will be created automatically
+    | for you. Here you can define a custom name for that roles.
     |
-    | "god": The god role is a role which has permissions for do all actions.
-    | "default" table: This is the role which will be assigned if a user is persisted
-    |                   without a role assigned.
+    | - God: This role will be granted for all permissions. You can not revoke any permission to this role.
+    |
+    | - Default: This role will be the role assigned to a user when is created. By default this role
+    | don't have any permission granted. You should grant permissions manually afterwards.
     |
     */
     'roles' => [
-        'god' => 'god',
-        'default' => 'user'
+        'god' => [
+            'name' => 'god'
+        ],
+
+        'default' => [
+            'name' => 'default'
+        ]
     ]
 ];

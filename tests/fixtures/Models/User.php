@@ -5,27 +5,19 @@ namespace Kodilab\LaravelBatuta\Tests\fixtures\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Kodilab\LaravelBatuta\Contracts\Permissionable;
+use Kodilab\LaravelBatuta\Traits\HasRoles;
 use Kodilab\LaravelBatuta\Traits\UserPermissions;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Permissionable
 {
-    use UserPermissions;
+    use UserPermissions, HasRoles;
     use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name', 'email', 'password', 'group_id'
-    ];
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    public $inheritPermissions = true;
+
+    private function shouldInheritPermissions()
+    {
+        return $this->inheritPermissions;
+    }
 }

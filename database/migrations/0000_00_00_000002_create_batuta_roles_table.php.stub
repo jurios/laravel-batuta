@@ -14,8 +14,8 @@ class CreateBatutaRolesTable extends Migration
 
     public function __construct()
     {
-        $this->table = config('batuta.tables.roles', 'batuta_roles');
-        $this->table_role_user = config('batuta.tables.role_user', 'batuta_role_user');
+        $this->table = config('batuta.tables.roles', 'roles');
+        $this->table_role_user = config('batuta.tables.role_user', 'role_user');
     }
 
     /**
@@ -25,6 +25,7 @@ class CreateBatutaRolesTable extends Migration
     {
         Schema::create($this->table, function (Blueprint $table) {
             $table->bigIncrements('id');
+
             $table->string('name')->unique()->nullable(false)->default(null);
 
             $table->boolean('god')->nullable(false)->default(false);
@@ -36,22 +37,23 @@ class CreateBatutaRolesTable extends Migration
         Schema::create($this->table_role_user, function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->nullable(false)->default(null);
             $table->foreign('user_id')->references('id')
-                        ->on(config('batuta.tables.users', 'users'))->onDelete('cascade');
+                    ->on(config('batuta.tables.users', 'users'))->onDelete('cascade');
 
             $table->unsignedBigInteger('role_id')->nullable(false)->default(null);
             $table->foreign('role_id')->references('id')
-                        ->on(config('batuta.tables.roles', 'batuta_roles'))->onDelete('cascade');
+                    ->on(config('batuta.tables.roles', 'roles'))->onDelete('cascade');
         });
 
-        //Creating "god" user
+        /*
+         * CREATE INITIAL ROLES
+         */
         DB::table($this->table)->insert([
-            'name' => config('batuta.roles.god', 'god'),
+            'name' => config('batuta.roles.god.name', 'god'),
             'god' => true
         ]);
 
-        //Creating "default" user
         DB::table($this->table)->insert([
-            'name' => config('batuta.roles.default', 'user'),
+            'name' => config('batuta.roles.default.name', 'default'),
             'default' => true
         ]);
     }

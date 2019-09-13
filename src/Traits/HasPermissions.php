@@ -4,33 +4,124 @@
 namespace Kodilab\LaravelBatuta\Traits;
 
 
+use Kodilab\LaravelBatuta\Contracts\Permissionable;
+use Kodilab\LaravelBatuta\Exceptions\ActionNotFound;
 use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Pivots\Permission;
 
 trait HasPermissions
 {
-    public function actions()
+    protected static function bootHasPermissions()
     {
-        return $this->belongsToMany(Action::class, self::getPermissionsTable())
-            ->using(Permission::class)
-            ->withPivot(['permission']);
+        if (!in_array(Permissionable::class, class_implements(self::class))) {
+            throw new \Exception(
+                sprintf("Class '%s' does not implement '%s' interface when is using '%s' trait",
+                    self::class, Permissionable::class, HasPermissions::class)
+            );
+        }
     }
 
     /**
-     * Updates a permission (or create if it does not exist). If detaching is true, then the previous permissions are
-     * removed.
+     * Actions relationship (permissions)
+     *
+     * @return mixed
+     */
+    public function batuta_actions()
+    {
+        return $this->belongsToMany(Action::class, $this->getPermissionsTable())
+            ->using(Permission::class)->withPivot(['granted']);
+    }
+
+    /**
+     * Update a permission over an action. Both, action instance or action name are allowed as input.
+     *
+     * @param mixed $action
+     * @param bool $grant
+     */
+    public function updatePermission($action, bool $grant)
+    {
+        $action = $this->getActionInstanceOrFail($action);
+
+        $this->batuta_actions()->sync([$action->id => ['granted' => $grant]], false);
+        $this->refresh();
+    }
+
+    /**
+     * Update multiple permissions. If detaching is true, then previous permissions are removed.
+     * The array format must be:
+     *
+     *  [
+     *      $actionId => true|false,
+     *      ...
+     *  ]
      *
      * @param array $permissions
      * @param bool $detaching
      */
-    public function updatePermissions(array $permissions, bool $detaching = false)
+    public function bulkPermissions(array $permissions, bool $detaching = false)
     {
         $permissions = array_map(function ($item) {
-            return ['permission' => $item];
+            return ['granted' => $item];
         }, $permissions);
 
-        $this->actions()->sync($permissions, $detaching);
+        $this->batuta_actions()->sync($permissions, $detaching);
+    }
 
-        $this->refresh();
+    /**
+     * Returns whether a permission is granted. Both action instance or action name are allowed as input.
+     *
+     * @param mixed $action
+     * @return bool
+     */
+    public function hasPermission($action)
+    {
+        $action = $this->getActionInstanceOrFail($action);
+
+        if ($this->isGod()) {
+            return true;
+        }
+
+        if (!is_null($permission = $this->batuta_actions()->find($action->id))) {
+            return $permission->pivot->granted;
+        }
+
+        if (! method_exists($this, 'shouldInheritPermissions') || $this->shouldInheritPermissions()) {
+            return method_exists($this, 'getInheritedPermission') ?
+                $this->getInheritedPermission($action) : false;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return whether should grant all permissions
+     *
+     * @return bool
+     */
+    private function shouldGrantAllPermissions()
+    {
+        if (method_exists($this, 'grantAllPermissions')) {
+            return $this->grantAllPermissions();
+        }
+        return false;
+    }
+
+    /**
+     * Returns the persisted action. If action is the action name, look for the action.
+     *
+     * @param $action
+     * @return Action
+     */
+    private function getActionInstanceOrFail($action)
+    {
+        if (is_string($action) && !is_null($action_instance = Action::findByName($action))) {
+            $action = $action_instance;
+        }
+
+        if (!is_string($action) && get_class($action) === Action::class && $action->exists) {
+            return $action;
+        }
+
+        throw new ActionNotFound(sprintf('Action \'%s\' not found', $action));
     }
 }

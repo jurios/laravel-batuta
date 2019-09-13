@@ -1,0 +1,59 @@
+<?php
+
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+class CreateBatutaPermissionsTables extends Migration
+{
+    /** @var string */
+    protected $table_user_permissions;
+
+    /** @var string */
+    protected $table_role_permissions;
+
+    public function __construct()
+    {
+        $this->table_user_permissions = config('batuta.tables.user_permissions', 'user_permissions');
+        $this->table_role_permissions = config('batuta.tables.role_permissions', 'role_permissions');
+    }
+
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::create($this->table_user_permissions, function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id')->nullable(false)->default(null);
+            $table->foreign('user_id')->references('id')
+                        ->on(config('batuta.tables.users', 'users'))->onDelete('cascade');
+
+            $table->unsignedBigInteger('action_id')->nullable(false)->default(null);
+            $table->foreign('action_id')->references('id')
+                        ->on(config('batuta.tables.actions', 'actions'))->onDelete('cascade');
+
+            $table->boolean('granted')->nullable(false)->default(false);
+        });
+
+        Schema::create($this->table_role_permissions, function (Blueprint $table) {
+            $table->unsignedBigInteger('role_id')->nullable(false)->default(null);
+            $table->foreign('role_id')->references('id')
+                        ->on(config('batuta.tables.roles', 'roles'))->onDelete('cascade');
+
+            $table->unsignedBigInteger('action_id')->nullable(false)->default(null);
+            $table->foreign('action_id')->references('id')
+                        ->on(config('batuta.tables.actions', 'actions'))->onDelete('cascade');
+
+            $table->boolean('granted')->nullable(false)->default(false);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists($this->table_user_permissions);
+        Schema::dropIfExists($this->table_role_permissions);
+    }
+}
