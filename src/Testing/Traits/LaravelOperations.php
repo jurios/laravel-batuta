@@ -11,10 +11,14 @@ trait LaravelOperations
      */
     protected function removePublishedMigrations()
     {
-        $files = $this->filesystem->files(__DIR__ . '/../../../vendor/orchestra/testbench-core/laravel/database/migrations');
-        foreach ($files as $file) {
-            if ($file->getExtension() === 'php') {
-                $this->filesystem->delete($file->getRealPath());
+        $path = __DIR__ . '/../../../vendor/orchestra/testbench-core/laravel/database/migrations';
+
+        if ($this->filesystem->isDirectory($path)) {
+            $files = $this->filesystem->files($path);
+            foreach ($files as $file) {
+                if ($file->getExtension() === 'php') {
+                    $this->filesystem->delete($file->getRealPath());
+                }
             }
         }
     }

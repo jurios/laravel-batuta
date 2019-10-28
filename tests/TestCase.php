@@ -5,6 +5,7 @@ namespace Kodilab\LaravelBatuta\Tests;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Exceptions\Handler;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Kodilab\LaravelBatuta\LaravelBatutaProvider;
 use Kodilab\LaravelBatuta\Testing\Traits\InstallPackage;
 use Kodilab\LaravelBatuta\Testing\Traits\LaravelOperations;
@@ -15,6 +16,7 @@ use Symfony\Component\Finder\SplFileInfo;
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     use LaravelOperations;
+    use RefreshDatabase;
 
     protected $filesystem;
 
