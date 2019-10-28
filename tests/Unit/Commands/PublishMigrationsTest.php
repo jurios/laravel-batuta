@@ -37,7 +37,7 @@ class PublishMigrationsTest extends TestCase
     {
         $migrations = array_map(function (SplFileInfo $file) {
             return preg_replace('/^[0-9]{4}_[0-9]{2}_[0-9]{2}_[0-9]{6}_/', '', $this->removeStubExtension($file->getFilename()));
-        },$this->filesystem->allFiles(__DIR__ . '/../../../../database/migrations'));
+        },$this->filesystem->allFiles(__DIR__ . '/../../../database/migrations'));
 
         $this->artisan('batuta:migrations');
 

@@ -38,7 +38,7 @@ class PublishSeedsTest extends TestCase
     {
         $seeds = array_map(function (SplFileInfo $file) {
             return $this->removeStubExtension($file->getFilename());
-        }, $this->filesystem->files(__DIR__ . '/../../../../database/seeds'));
+        }, $this->filesystem->files(__DIR__ . '/../../../database/seeds'));
 
         $this->artisan('batuta:seeds');
 

@@ -40,18 +40,6 @@ class ConfigTest extends TestCase
         $this->assertTrue($this->filesystem->exists($this->published_path));
     }
 
-    public function test_config_with_force_option_should_overwrite_the_config_file()
-    {
-        $this->artisan('batuta:config')->run();
-        $this->assertTrue($this->filesystem->exists($this->published_path));
-
-        file_put_contents($this->published_path, '');
-        $this->assertEquals('', file_get_contents($this->published_path));
-
-        $this->artisan('batuta:config --force')->run();
-        $this->assertNotEquals('', file_get_contents($this->published_path));
-    }
-
     private function removePublishedConfiguration()
     {
         $this->filesystem->delete($this->published_path);

@@ -6,7 +6,7 @@ namespace Kodilab\LaravelBatuta;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
-use Kodilab\LaravelBatuta\Console\Commands\Config;
+use Kodilab\LaravelBatuta\Console\Commands\PublishConfig;
 use Kodilab\LaravelBatuta\Console\Commands\PublishMigrations;
 use Kodilab\LaravelBatuta\Console\Commands\PublishSeeds;
 
@@ -30,7 +30,7 @@ class LaravelBatutaProvider extends ServiceProvider
     public function boot()
     {
         $this->commands([
-            Config::class,
+            PublishConfig::class,
             PublishMigrations::class,
             PublishSeeds::class,
         ]);
