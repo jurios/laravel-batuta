@@ -41,10 +41,7 @@ trait HasRoles
      */
     public function batuta_roles()
     {
-        $table = method_exists($this, 'getRoleRelationshipTable') ?
-            $this->getRoleRelationshipTable() : null;
-
-        return $this->belongsToMany(Role::class, $table);
+        return $this->belongsToMany(Role::class, config('batuta.tables.role_user', 'role_user'));
     }
 
     /**
