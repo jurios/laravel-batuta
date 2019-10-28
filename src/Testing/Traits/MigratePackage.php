@@ -4,6 +4,7 @@
 namespace Kodilab\LaravelBatuta\Testing\Traits;
 
 
+use Kodilab\LaravelBatuta\Seeders\RoleTableSeeder;
 use Symfony\Component\Finder\SplFileInfo;
 
 trait MigratePackage
@@ -16,13 +17,24 @@ trait MigratePackage
     {
         $this->withFactories(__DIR__ . '/../../database/factories');
 
+        if (!$this->filesystem->isDirectory(database_path('seeds'))) {
+            $this->filesystem->makeDirectory(database_path('seeds'));
+        }
+
         //Only publish package migrations in case other test hasn't done it yet.
         if (!$this->areMigrationsPublished()) {
             $this->artisan('batuta:migrations');
+            $this->artisan('batuta:seeds');
         }
 
         $this->loadLaravelMigrations();
         $this->artisan('migrate');
+
+        try {
+            $this->artisan('db:seed', [
+                '--class' => RoleTableSeeder::class
+            ]);
+        } catch (\Exception $e) {}
     }
 
     /**

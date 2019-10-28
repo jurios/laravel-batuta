@@ -30,6 +30,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
     public function __destruct()
     {
         $this->removePublishedMigrations();
+        $this->removePublishedFactories();
+        $this->removePublishedSeeds();
     }
 
     protected function setUp(): void

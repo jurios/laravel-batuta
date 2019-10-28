@@ -31,6 +31,7 @@ class PublishMigrations extends PublishCommand
     protected function generateDestinationPaths()
     {
         $destinations = [];
+
         $index = 0;
         $files = $this->getStubFilesFrom($this->migrations_path);
 

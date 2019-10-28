@@ -22,5 +22,17 @@ return [
         'role_user'         => 'role_user',
         'user_permissions'  => 'user_permissions',
         'role_permissions'  => 'role_permissions'
-    ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | God attribute
+    |--------------------------------------------------------------------------
+    |
+    | A Role with a god attribute will have all permission granted in case you
+    | set 'allow_god_role' to true. What's more, a role with 'god' flag will be
+    | created if you use the batuta seeder.
+    |
+    */
+    'allow_god' => true,
 ];

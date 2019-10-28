@@ -8,6 +8,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
 use Kodilab\LaravelBatuta\Console\Commands\Config;
 use Kodilab\LaravelBatuta\Console\Commands\PublishMigrations;
+use Kodilab\LaravelBatuta\Console\Commands\PublishSeeds;
 
 class LaravelBatutaProvider extends ServiceProvider
 {
@@ -30,7 +31,8 @@ class LaravelBatutaProvider extends ServiceProvider
     {
         $this->commands([
             Config::class,
-            PublishMigrations::class
+            PublishMigrations::class,
+            PublishSeeds::class,
         ]);
     }
 

@@ -125,7 +125,13 @@ trait HasRoles
      */
     public function isGod()
     {
-        return !is_null($this->batuta_roles()->find(Role::getGod()->id));
+        $id = !is_null($god = Role::getGod()) ? $god->id : null;
+
+        if (is_null($id)) {
+            return false;
+        }
+
+        return !is_null($this->batuta_roles()->find($id));
     }
 
 }

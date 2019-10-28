@@ -4,12 +4,13 @@
 namespace Kodilab\LaravelBatuta\Exceptions;
 
 
+use Throwable;
 
-class GodRoleNotFound extends \RuntimeException
+class DefaultRoleAlreadyExists extends \RuntimeException
 {
     public function __construct()
     {
-        $message = 'No god role found. One, and only one, god role must exist';
+        $message = 'Default role already exists.';
 
         parent::__construct($message, 0, null);
     }

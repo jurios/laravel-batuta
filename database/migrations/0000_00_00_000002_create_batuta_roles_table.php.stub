@@ -43,19 +43,6 @@ class CreateBatutaRolesTable extends Migration
             $table->foreign('role_id')->references('id')
                     ->on(config('batuta.tables.roles', 'roles'))->onDelete('cascade');
         });
-
-        /*
-         * CREATE INITIAL ROLES
-         */
-        DB::table($this->table)->insert([
-            'name' => config('batuta.roles.god.name', 'god'),
-            'god' => true
-        ]);
-
-        DB::table($this->table)->insert([
-            'name' => config('batuta.roles.default.name', 'default'),
-            'default' => true
-        ]);
     }
 
     /**
