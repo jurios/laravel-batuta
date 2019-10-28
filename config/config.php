@@ -22,29 +22,5 @@ return [
         'role_user'         => 'role_user',
         'user_permissions'  => 'user_permissions',
         'role_permissions'  => 'role_permissions'
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Roles
-    |--------------------------------------------------------------------------
-    |
-    | You must define two initial roles. Those roles will be created automatically
-    | for you. Here you can define a custom name for that roles.
-    |
-    | - God: This role will be granted for all permissions. You can not revoke any permission to this role.
-    |
-    | - Default: This role will be the role assigned to a user when is created. By default this role
-    | don't have any permission granted. You should grant permissions manually afterwards.
-    |
-    */
-    'roles' => [
-        'god' => [
-            'name' => 'god'
-        ],
-
-        'default' => [
-            'name' => 'default'
-        ]
     ]
 ];

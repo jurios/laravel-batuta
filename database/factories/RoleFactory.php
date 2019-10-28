@@ -1,9 +1,9 @@
 <?php
 
 use Faker\Generator as Faker;
-use Kodilab\LaravelBatuta\Models\Resource;
+use Kodilab\LaravelBatuta\Models\Role;
 
-$factory->define(\Kodilab\LaravelBatuta\Models\Role::class, function (Faker $faker) {
+$factory->define(Role::class, function (Faker $faker) {
     return [
         'name' => $faker->unique()->word,
         'god' => false,

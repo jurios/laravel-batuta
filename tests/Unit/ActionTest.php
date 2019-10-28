@@ -7,11 +7,13 @@ namespace Kodilab\LaravelBatuta\Tests\Unit;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
 use Kodilab\LaravelBatuta\Models\Action;
+use Kodilab\LaravelBatuta\Testing\Traits\InstallPackage;
 use Kodilab\LaravelBatuta\Tests\TestCase;
 
 class ActionTest extends TestCase
 {
     use WithFaker;
+    use InstallPackage;
 
     public function test_persisted_verb_should_slug_the_verb()
     {

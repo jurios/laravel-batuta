@@ -6,11 +6,14 @@ namespace Kodilab\LaravelBatuta\Tests\Unit\Traits;
 
 use Illuminate\Support\Facades\DB;
 use Kodilab\LaravelBatuta\Models\Role;
+use Kodilab\LaravelBatuta\Testing\Traits\InstallPackage;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\User;
 use Kodilab\LaravelBatuta\Tests\TestCase;
 
 class HasRolesTest extends TestCase
 {
+    use InstallPackage;
+
     /** @var User */
     protected $user;
 

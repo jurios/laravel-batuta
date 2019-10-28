@@ -8,10 +8,13 @@ use Illuminate\Support\Facades\DB;
 use Kodilab\LaravelBatuta\Exceptions\DefaultRoleNotFound;
 use Kodilab\LaravelBatuta\Exceptions\GodRoleNotFound;
 use Kodilab\LaravelBatuta\Models\Role;
+use Kodilab\LaravelBatuta\Testing\Traits\InstallPackage;
 use Kodilab\LaravelBatuta\Tests\TestCase;
 
 class RoleTest extends TestCase
 {
+    use InstallPackage;
+
     public function test_default_role_can_not_be_destroyed()
     {
         $this->expectException(\InvalidArgumentException::class);

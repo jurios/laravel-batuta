@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Kodilab\LaravelBatuta\Exceptions\ActionNotFound;
 use Kodilab\LaravelBatuta\Models\Action;
 use Kodilab\LaravelBatuta\Models\Role;
+use Kodilab\LaravelBatuta\Testing\Traits\InstallPackage;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\ModelNotImplementsPermissionable;
 use Kodilab\LaravelBatuta\Tests\fixtures\Models\User;
 use Kodilab\LaravelBatuta\Tests\TestCase;
@@ -15,6 +16,7 @@ use Kodilab\LaravelBatuta\Tests\TestCase;
 class HasPermissionsTest extends TestCase
 {
     use WithFaker;
+    use InstallPackage;
 
     /** @var User */
     protected $user;

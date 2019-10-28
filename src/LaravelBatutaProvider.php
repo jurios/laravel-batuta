@@ -6,9 +6,8 @@ namespace Kodilab\LaravelBatuta;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
-use Kodilab\LaravelBatuta\Batuta\Batuta;
 use Kodilab\LaravelBatuta\Console\Commands\Config;
-use Kodilab\LaravelBatuta\Console\Commands\Install;
+use Kodilab\LaravelBatuta\Console\Commands\PublishMigrations;
 
 class LaravelBatutaProvider extends ServiceProvider
 {
@@ -22,13 +21,6 @@ class LaravelBatutaProvider extends ServiceProvider
      */
     protected $defer = false;
 
-    public function __construct($app)
-    {
-        parent::__construct($app);
-
-        $this->filesystem = new Filesystem();
-    }
-
     /**
      * Bootstrap services.
      *
@@ -37,8 +29,8 @@ class LaravelBatutaProvider extends ServiceProvider
     public function boot()
     {
         $this->commands([
-            Install::class,
-            Config::class
+            Config::class,
+            PublishMigrations::class
         ]);
     }
 
@@ -49,8 +41,6 @@ class LaravelBatutaProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('batuta', function ($app) {
-            return new Batuta();
-        });
+        //
     }
 }
