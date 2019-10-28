@@ -13,11 +13,4 @@ class User extends Authenticatable implements Permissionable
 {
     use UserPermissions, HasRoles;
     use Notifiable;
-
-    public $inheritPermissions = true;
-
-    private function shouldInheritPermissions()
-    {
-        return $this->inheritPermissions;
-    }
 }

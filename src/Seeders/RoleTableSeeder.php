@@ -19,6 +19,13 @@ class RoleTableSeeder extends Seeder
     protected $default_role_name = 'default';
 
     /**
+     * Create god role flag
+     *
+     * @var bool
+     */
+    protected $god_role_creation = true;
+
+    /**
      * God role name
      *
      * @var string
@@ -44,7 +51,7 @@ class RoleTableSeeder extends Seeder
     {
         $this->createDefaultRole();
 
-        if (config('batuta.allow_god', true)) {
+        if ($this->god_role_creation) {
             $this->createGodRole();
         }
     }

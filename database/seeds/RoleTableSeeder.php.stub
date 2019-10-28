@@ -4,21 +4,28 @@ use Kodilab\LaravelBatuta\Seeders\RoleTableSeeder as Seeder;
 
 class RoleTableSeeder extends Seeder
 {
+
     /*
-     * DEFAULT ROLE
-     *
-     * Set the default role name
+     * This seeder will create the default role and a role with 'god' flag.
+     * The default role is mandatory but you can deactivate the god role creation in case you don't need it.
+     */
+
+
+
+    /*
+     * Here you can define the default role name.
      */
     protected $default_role_name = 'default';
 
     /*
-     * GOD ROLE
-     *
-     * God role will be created only if you set 'allow_god' as true in the batuta config file.
-     * If you are using the default batuta configuration, then 'allow_god' is set to true and therefore, a god role
-     * will be created
+     * In case you don't need a god role, you can deactivate the god role creation setting
+     * this attribute to false.
      */
-    // Set the god role name
+    protected $god_role_creation = true;
+
+    /*
+     * If you are going to create a god role, here you can define the default role name.
+     */
     protected $god_role_name = 'god';
 
 

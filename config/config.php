@@ -29,10 +29,21 @@ return [
     | God attribute
     |--------------------------------------------------------------------------
     |
-    | A Role with a god attribute will have all permission granted in case you
-    | set 'allow_god_role' to true. What's more, a role with 'god' flag will be
-    | created if you use the batuta seeder.
+    | A Role with "god" flag set to true will have all permission granted in case you
+    | set 'allow_god' to true.
     |
     */
     'allow_god' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Role inheritance
+    |--------------------------------------------------------------------------
+    |
+    | When a permission is not set for a user (that means, is 'null'), by default
+    | the user's role permissions are inherited. You can disable the behaviour setting
+    | this parameter to false.
+    |
+    */
+    'role_inheritance' => true,
 ];

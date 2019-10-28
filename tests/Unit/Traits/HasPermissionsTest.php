@@ -42,6 +42,9 @@ class HasPermissionsTest extends TestCase
         new ModelNotImplementsPermissionable();
     }
 
+    /*
+     * UPDATE PERMISSION
+     */
     public function test_updatePermission_should_update_a_permission()
     {
         $this->user->updatePermission($this->action, false);
@@ -76,6 +79,9 @@ class HasPermissionsTest extends TestCase
         $this->user->updatePermission($this->faker->word, false);
     }
 
+    /*
+     * BULK PERMISSIONS
+     */
     public function test_bulkPermissions_should_update_multiple_permissions()
     {
         $actions = factory(Action::class, 10)->create();
@@ -121,26 +127,9 @@ class HasPermissionsTest extends TestCase
         $this->assertNull($this->user->batuta_actions()->find($this->action->id));
     }
 
-    public function test_hasPermission_should_return_true_if_the_permission_is_set_and_is_true()
-    {
-        $this->user->updatePermission($this->action, true);
-
-        $this->assertTrue($this->user->hasPermission($this->action));
-    }
-
-    public function test_hasPermission_should_return_false_if_the_permission_is_set_and_is_false()
-    {
-        $this->user->updatePermission($this->action, false);
-
-        $this->assertFalse($this->user->hasPermission($this->action));
-    }
-
-    public function test_hasPermission_should_return_false_if_the_permission_is_not_set()
-    {
-        $this->user->updatePermission($this->action, false);
-
-        $this->assertFalse($this->user->hasPermission($this->action));
-    }
+    /*
+     * HAS PERMISSION
+     */
 
     public function test_hasPermission_should_throw_an_exception_if_the_action_does_not_exist()
     {
@@ -149,86 +138,97 @@ class HasPermissionsTest extends TestCase
         $this->user->hasPermission(factory(Action::class)->make());
     }
 
-    public function test_hasPermission_should_return_the_permission_using_the_action_name()
+    public function test_hasPermission_should_return_whether_the_permission_value_is_if_it_is_set()
     {
         $this->user->updatePermission($this->action, true);
-
-        $this->assertTrue($this->user->hasPermission($this->action->name));
+        $this->assertTrue($this->user->hasPermission($this->action));
 
         $this->user->updatePermission($this->action, false);
-
-        $this->assertFalse($this->user->hasPermission($this->action->name));
+        $this->assertFalse($this->user->hasPermission($this->action));
     }
 
-    public function test_hasPermission_should_throw_an_exception_if_the_action_name_does_not_exist()
+    public function test_hasPermission_should_return_false_if_the_permission_is_not_set()
+    {
+        $this->user->updatePermission($this->action, false);
+        $this->assertFalse($this->user->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_should_throw_an_exception_if_the_action_does_not_exist_by_using_the_action_name()
     {
         $this->expectException(ActionNotFound::class);
 
         $this->user->hasPermission($this->faker->word);
     }
 
-    public function test_hasPermission_should_return_true_if_belongs_to_god_role()
+    public function test_hasPermission_should_return_whether_the_permission_is_set_by_using_the_action_name()
+    {
+        $this->user->updatePermission($this->action, true);
+        $this->assertTrue($this->user->hasPermission($this->action->name));
+
+        $this->user->updatePermission($this->action, false);
+        $this->assertFalse($this->user->hasPermission($this->action->name));
+    }
+
+    public function test_hasPermission_should_return_the_role_inheritance_if_the_permission_is_not_set()
+    {
+        $this->user->addRole($this->role);
+
+        $this->role->updatePermission($this->action, true);
+        $this->assertTrue($this->user->hasPermission($this->action));
+
+        $this->role->updatePermission($this->action, false);
+        $this->assertFalse($this->user->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_should_return_false_if_the_permission_is_not_set_and_its_role_permissions_is_not_set()
+    {
+        $this->user->addRole($this->role);
+
+        $this->assertFalse($this->user->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_should_return_false_if_the_permission_is_not_set_and_role_inheritance_is_disabled()
+    {
+        $this->app['config']->set('batuta.role_inheritance', false);
+
+        $this->user->addRole($this->role);
+        $this->role->updatePermission($this->action, true);
+
+        $this->assertFalse($this->user->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_should_return_the_permission_if_its_set_and_ignore_the_inheritance()
+    {
+        $this->user->addRole($this->role);
+
+        $this->role->updatePermission($this->action, true);
+        $this->user->updatePermission($this->action, false);
+        $this->assertFalse($this->user->hasPermission($this->action));
+
+        $this->role->updatePermission($this->action, false);
+        $this->user->updatePermission($this->action, true);
+        $this->assertTrue($this->user->hasPermission($this->action));
+    }
+
+    public function test_hasPermission_should_return_true_if_the_actor_belongs_to_god_role()
     {
         $this->user->addRole(Role::getGod());
 
         Role::getGod()->updatePermission($this->action, false);
 
         $this->assertTrue($this->user->hasPermission($this->action));
+        $this->assertTrue(Role::getGod()->hasPermission($this->action));
     }
 
-    public function test_hasPermissions_should_return_true_if_the_role_is_god()
+    public function test_hasPermission_should_return_the_permission_if_the_actor_belongs_to_god_role_and_allow_god_is_set_to_false()
     {
-        /** @var Role $role */
-        $role = Role::getGod();
-        $role->updatePermission($this->action, false);
+        $this->app['config']->set('batuta.allow_god', false);
 
-        $this->assertTrue($role->hasPermission($this->action));
-    }
+        $this->user->addRole(Role::getGod());
 
-    public function test_hasPermission_should_return_true_if_the_permission_is_not_set_and_a_role_has_the_permission()
-    {
-        $this->user->addRole($this->role);
-        $this->role->updatePermission($this->action, true);
-
-        $this->assertTrue($this->user->hasPermission($this->action));
-    }
-
-    public function test_hasPermission_should_return_false_if_the_permission_is_not_set_and_a_role_does_not_have_the_permission()
-    {
-        $this->user->addRole($this->role);
-        $this->role->updatePermission($this->action, false);
+        Role::getGod()->updatePermission($this->action, false);
 
         $this->assertFalse($this->user->hasPermission($this->action));
+        $this->assertFalse(Role::getGod()->hasPermission($this->action));
     }
-
-    public function test_hasPermission_should_return_false_if_the_permission_is_set_false_and_a_role_is_granted_for_the_permission()
-    {
-        $this->user->addRole($this->role);
-        $this->role->updatePermission($this->action, true);
-
-        $this->user->updatePermission($this->action, false);
-
-        $this->assertFalse($this->user->hasPermission($this->action));
-    }
-
-    public function test_hasPermission_should_return_true_if_the_permission_is_set_true_and_a_role_is_not_granted_for_the_permission()
-    {
-        $this->user->addRole($this->role);
-        $this->role->updatePermission($this->action, false);
-
-        $this->user->updatePermission($this->action, true);
-
-        $this->assertTrue($this->user->hasPermission($this->action));
-    }
-
-    public function test_hasPermission_is_not_inherited_if_the_flag_is_set_to_false()
-    {
-        $this->user->addRole($this->role);
-        $this->role->updatePermission($this->action, true);
-
-        $this->user->inheritPermissions = false;
-
-        $this->assertFalse($this->user->hasPermission($this->action));
-    }
-
 }

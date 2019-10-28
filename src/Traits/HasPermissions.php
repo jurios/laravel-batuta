@@ -77,7 +77,7 @@ trait HasPermissions
     {
         $action = $this->getActionInstanceOrFail($action);
 
-        if ($this->isGod()) {
+        if (config('batuta.allow_god', true) && $this->isGod()) {
             return true;
         }
 
@@ -85,12 +85,22 @@ trait HasPermissions
             return $permission->pivot->granted;
         }
 
-        if (! method_exists($this, 'shouldInheritPermissions') || $this->shouldInheritPermissions()) {
+        if ($this->shouldInheritPermissions()) {
             return method_exists($this, 'getInheritedPermission') ?
                 $this->getInheritedPermission($action) : false;
         }
 
         return false;
+    }
+
+    /**
+     * Returns if role inheritance is allowed for that actor
+     *
+     * @return bool
+     */
+    protected function shouldInheritPermissions()
+    {
+       return config('batuta.role_inheritance', true);
     }
 
     /**
