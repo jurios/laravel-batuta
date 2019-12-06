@@ -22,6 +22,18 @@ matrix:
       env: DB_USERNAME=travis DB_PASSWORD="" DB_CONNECTION=pgsql DB_PORT=5432 DB_DATABASE="testing"
     - php: 7.2
       env: DB_DATABASE=":memory:" DB_CONNECTION=sqlite
+    - php: 7.3
+      env: DB_USERNAME=travis DB_PASSWORD="" DB_DATABASE="testing" DB_CONNECTION=mysql
+    - php: 7.3
+      env: DB_USERNAME=travis DB_PASSWORD="" DB_CONNECTION=pgsql DB_PORT=5432 DB_DATABASE="testing"
+    - php: 7.3
+      env: DB_DATABASE=":memory:" DB_CONNECTION=sqlite
+    - php: 7.4
+      env: DB_USERNAME=travis DB_PASSWORD="" DB_DATABASE="testing" DB_CONNECTION=mysql
+    - php: 7.4
+      env: DB_USERNAME=travis DB_PASSWORD="" DB_CONNECTION=pgsql DB_PORT=5432 DB_DATABASE="testing"
+    - php: 7.4
+      env: DB_DATABASE=":memory:" DB_CONNECTION=sqlite
 
 cache:
   directories:
