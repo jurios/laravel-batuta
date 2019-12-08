@@ -5,6 +5,7 @@ namespace Kodilab\LaravelBatuta\Models;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User;
 use Kodilab\LaravelBatuta\Contracts\Permissionable;
 use Kodilab\LaravelBatuta\Exceptions\DefaultRoleNotFound;
 use Kodilab\LaravelBatuta\Exceptions\GodRoleNotFound;
@@ -41,6 +42,11 @@ class Role extends Model implements Permissionable
         });
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     /**
      * Returns whether this role is the default role
      *
@@ -73,7 +79,7 @@ class Role extends Model implements Permissionable
     /**
      * Returns god role. If it does not exist, then an exception is thrown.
      *
-     * @return mixed
+     * @return Role
      */
     public static function getGod()
     {

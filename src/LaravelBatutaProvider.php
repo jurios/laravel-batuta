@@ -6,7 +6,6 @@ namespace Kodilab\LaravelBatuta;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\ServiceProvider;
-use Kodilab\LaravelBatuta\Batuta\Batuta;
 use Kodilab\LaravelBatuta\Console\Commands\Config;
 use Kodilab\LaravelBatuta\Console\Commands\Install;
 
